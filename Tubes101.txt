@@ -1,10 +1,14 @@
 /***************************************/
 /*************TUBES_LOGKOM**************/
 
+NIM:
+13519010
+13519050
+13519122
+13519210
 
 /*** DESKRIPSI ***/
 /* Buat Game RPG */
-
 
 
 /******************************/
@@ -211,6 +215,12 @@
       > XpPotion:               (opsional)
         Xp: +... on use
 
+  /* Shop */
+    > Terdapat 1 Shop di Map di mana Player dapat melakukan Gacha
+    > Potion (kecuali XpPotion ?) dapat dibeli langsung di Shop
+    > Pembelian Equipment dilakukan dengan Gacha
+    > Gold yang dibutuhkan untuk Gacha sebesar ...
+    > Equipment yang didapat DAPAT tidak sesuai dengan Job
 
 /*** COMBAT ***/
   /* Enemy */
@@ -225,22 +235,42 @@
     > Battle Mechanics berdasarkan sistem giliran/turn, yang dimulai oleh Player
     > Setiap turn-nya, Player dapat melakukan Attack, SpecialAttack, UsePotion, atau Run
     > Setiap turn-nya, Enemy dapat melakukan Attack atau SpecialAttack
-    > Perhatikan untuk membedakan "Attack" sebagai atribut dan "Attack" sebagai aksi
+      > Enemy melakukan SpecialAttack (saat tidak cooldown) secara random (?)
     > Mekanisme Attack dan SpecialAttack:
       > Attack dan SpecialAttack mengurangi Health lawan sebesar (Attack - Defense lawan)
-      > Attack dan SpecialAttack mengurangi Stamina dan/atau Mana pengguna
+      > SpecialAttack dapat mengurangi Stamina dan/atau Mana pengguna
+      > SpecialAttack memiliki cooldown sebesar 3 turn
+    > Jika Player melakukan Run, terdapat kemungkinan random keberhasilan Run:
+      > Jika berhasil, keluar dari mode Battle
+      > Jika gagal, Battle dilanjutkan dan Enemy mendapatkan turn
+    > Perintah UsePotion memakan turn
 
 /*** WALKTHROUGH ***/
   /* Quest */
-  
+    > Player ke Tempat Pengambilan Quest untuk menerima Quest
+      > Player dapat memilih untuk menerima atau menolak Quest
+    > Player harus menyelesaikan Quest yang sedang aktif untuk bisa mengambil Quest berikutnya
+    > Saat mengambil Quest, Player menerima tuple (x,y,z): artinya
+      Player harus membunuh x slime, y goblin, dan z Wolf
+    > Setelah menyelesaikan Quest Player mendapat Xp dan gold
+    > Reward langsung diterima setelah Quest selesai tanpa harus ke Shop
+    > Quest dapat terus diambil di Tempat Pengambilan Quest selama permainan belum berakhir
+    > Sistem Reward:
+      > Xp bonus = (...*x + ...*y + ...*z)*(Level/20)
+      > Gold bonus = (...*x + ...*y + ...*z)*(Level/20)
 
   /* Exploration Mechanism */
     > Movement Command :
-        'W' : Up
-        'S' : Down
-        'A' : Left
-        'D' : Right
-    
+        'w' : Up
+        's' : Down
+        'a' : Left
+        'd' : Right
+    > Saat Player berada di tile khusus ('S', 'Q', 'D'), ditampilkan menu yang bersesuaian
+    > Player dapat menemui Enemy secara random saat bergerak ke tile Field '-'
+      > Player memasuki Battle saat menemui Enemy
+    > Saat Player bergerak ke arah Obstacle, tidak terjadi apa-apa
+
+
 
 
 /*** UI/UX ***/
@@ -251,4 +281,7 @@
         'S': Store
         'Q': lokasi pengambilan Quest
         'D': DungeonBoss
+        '#': Obstacle
+        '-': Field
     > Map dibatasi obstacle '#' di pinggir dan/atau di dalam map
+    > 
