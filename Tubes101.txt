@@ -231,8 +231,16 @@
       > Attack dan SpecialAttack mengurangi Stamina dan/atau Mana pengguna
 
 /*** WALKTHROUGH ***/
+  /* Quest */
+  
 
-
+  /* Exploration Mechanism */
+    > Movement Command :
+        'W' : Up
+        'S' : Down
+        'A' : Left
+        'D' : Right
+    
 
 
 /*** UI/UX ***/
