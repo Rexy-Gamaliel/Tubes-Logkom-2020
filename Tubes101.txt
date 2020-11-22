@@ -245,6 +245,7 @@ NIM:
       > Jika gagal, Battle dilanjutkan dan Enemy mendapatkan turn
     > Perintah UsePotion memakan turn
 
+
 /*** WALKTHROUGH ***/
   /* Quest */
     > Player ke Tempat Pengambilan Quest untuk menerima Quest
@@ -271,8 +272,6 @@ NIM:
     > Saat Player bergerak ke arah Obstacle, tidak terjadi apa-apa
 
 
-
-
 /*** UI/UX ***/
   /* MAP */
     > Map ukuran NxM
@@ -284,4 +283,3 @@ NIM:
         '#': Obstacle
         '-': Field
     > Map dibatasi obstacle '#' di pinggir dan/atau di dalam map
-    > 
