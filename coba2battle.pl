@@ -9,6 +9,7 @@
 :- dynamic(enemyAttack/1).
 :- dynamic(cooldown/1).
 
+:- include('map.pl').
 
 start :-
     \+ init(_),
@@ -18,7 +19,9 @@ start :-
     asserta(job(swordsman)),
     asserta(exper(0)),
     asserta(pattack(50)),
-    asserta(health(300)),!.
+    asserta(health(300)),
+    asserta(positionX(1)),
+    asserta(positionY(1)),!.
 
 
 start :-
