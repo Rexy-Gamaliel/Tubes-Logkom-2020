@@ -2,6 +2,7 @@
 :- dynamic(player/1).
 
 :- include('player.pl').
+:- include('map.pl').
 
 new :-
     write('                  '),nl,

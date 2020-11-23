@@ -12,6 +12,11 @@ shopY(4).
 questX(4).
 questY(8).
 
+initPlayer :-
+    asserta(cure(1)),
+    asserta(positionX(1)),
+    asserta(positionY(1)).
+
 isKiri(_,Y) :- 
     Y =:= 0.
 
@@ -94,6 +99,63 @@ printX(X,Y) :-
     print('-'),
     NewY is Y+1,
     printX(X,NewY).
+
+d :-
+    init(_),
+    positionX(TempX),
+    positionY(Temp),
+    Next is (Temp+1),
+    \+isAtas(TempX,Next),
+    \+isBawah(TempX,Next),
+    \+isKanan(TempX,Next),
+    \+isKiri(TempX,Next),
+    \+isQuest(TempX,Next),
+    \+isShop(TempX,Next),
+    retract(positionY(_)),
+    asserta(positionY(Next)),!.
+
+a :- 
+    init(_),
+    positionX(TempX),
+    positionY(Temp),
+    Next is (Temp-1),
+    \+isAtas(TempX,Next),
+    \+isBawah(TempX,Next),
+    \+isKanan(TempX,Next),
+    \+isKiri(TempX,Next),
+    \+isQuest(TempX,Next),
+    \+isShop(TempX,Next),
+    retract(positionY(_)),
+    asserta(positionY(Next)),!.
+
+s :-    
+    init(_),
+    positionX(TempX),
+    positionY(Temp),
+    Next is (TempX+1),
+    \+isAtas(Next,Temp),
+    \+isBawah(Next,Temp),
+    \+isKanan(Next,Temp),
+    \+isKiri(Next,Temp),
+    \+isQuest(Next,Temp),
+    \+isShop(Next,Temp),
+    retract(positionX(_)),
+    asserta(positionX(Next)),!.
+
+w :-
+    init(_),
+    positionX(TempX),
+    positionY(Temp),
+    Next is (TempX-1),
+    \+isAtas(Next,Temp),
+    \+isBawah(Next,Temp),
+    \+isKanan(Next,Temp),
+    \+isKiri(Next,Temp),
+    \+isQuest(Next,Temp),
+    \+isShop(Next,Temp),
+    retract(positionX(_)),
+    asserta(positionX(Next)),!.
+
 
 map :-
     init(_),
