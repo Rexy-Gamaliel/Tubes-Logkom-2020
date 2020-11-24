@@ -4,6 +4,17 @@
 panjang(15).
 lebar(15).
 
+/* 
+        Y
+      ################
+    X # 1,1     1,14 #
+      #              #
+      #              #
+      #              #
+      # 14,1   14,14 #
+      ################
+*/
+
 /* lokasi shop, masih ngasal dulu */
 shopX(4).
 shopY(4).
@@ -46,7 +57,7 @@ isPlayer(X,Y) :-
 printX(X,Y) :-
     isKanan(X,Y),
     isBawah(X,Y),
-    print('#').
+    print('#'),nl.
 
 printX(X,Y) :-
     isBawah(X,Y),
@@ -66,10 +77,16 @@ printX(X,Y) :-
     NewX is X+1,
     NewY is 0,
     printX(NewX,NewY).
-    
+
 printX(X,Y) :-
     isAtas(X,Y),
     print('#'),
+    NewY is Y+1,
+    printX(X,NewY).
+
+printX(X,Y) :-
+    isPlayer(X,Y),
+    print('P'),
     NewY is Y+1,
     printX(X,NewY).
 
@@ -86,12 +103,6 @@ printX(X,Y) :-
     printX(X,NewY).
 
 printX(X,Y) :-
-    isPlayer(X,Y),
-    print('P'),
-    NewY is Y+1,
-    printX(X,NewY).
-
-printX(X,Y) :-
     \+ isKiri(X,Y),
     \+ isAtas(X,Y),
     \+ isKanan(X,Y),
@@ -99,63 +110,6 @@ printX(X,Y) :-
     print('-'),
     NewY is Y+1,
     printX(X,NewY).
-
-d :-
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (Temp+1),
-    \+isAtas(TempX,Next),
-    \+isBawah(TempX,Next),
-    \+isKanan(TempX,Next),
-    \+isKiri(TempX,Next),
-    \+isQuest(TempX,Next),
-    \+isShop(TempX,Next),
-    retract(positionY(_)),
-    asserta(positionY(Next)),!.
-
-a :- 
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (Temp-1),
-    \+isAtas(TempX,Next),
-    \+isBawah(TempX,Next),
-    \+isKanan(TempX,Next),
-    \+isKiri(TempX,Next),
-    \+isQuest(TempX,Next),
-    \+isShop(TempX,Next),
-    retract(positionY(_)),
-    asserta(positionY(Next)),!.
-
-s :-    
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (TempX+1),
-    \+isAtas(Next,Temp),
-    \+isBawah(Next,Temp),
-    \+isKanan(Next,Temp),
-    \+isKiri(Next,Temp),
-    \+isQuest(Next,Temp),
-    \+isShop(Next,Temp),
-    retract(positionX(_)),
-    asserta(positionX(Next)),!.
-
-w :-
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (TempX-1),
-    \+isAtas(Next,Temp),
-    \+isBawah(Next,Temp),
-    \+isKanan(Next,Temp),
-    \+isKiri(Next,Temp),
-    \+isQuest(Next,Temp),
-    \+isShop(Next,Temp),
-    retract(positionX(_)),
-    asserta(positionX(Next)),!.
-
 
 map :-
     init(_),
