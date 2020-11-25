@@ -31,7 +31,9 @@ start :-
 start :-
     init(_),
     print('Permainan sudah dimulai!'),
-    generateEnemy(7),!.
+    generateEnemy(1,7),
+    generateEnemy(2,7),
+    generateEnemy(3,7),!.
 
 
 level :-

@@ -57,17 +57,20 @@ initPlayer :-
     asserta(positionX(1)),
     asserta(positionY(1)).
 
-generateEnemy(0) :- !.
+generateEnemy(_,0) :- !.
 
-generateEnemy(N) :-
-    random(8,15,TempY),
-    random(1,8,TempX),
+generateEnemy(Zone,N) :-
+    getBound(Zone,LowerX,UpperX,LowerY,UpperY),
+    UpY is UpperY+1,
+    UpX is UpperX+1,
+    random(LowerY,UpY,TempY),
+    random(LowerX,UpX,TempX),
     (
         isEnemy(TempX,TempY) ->
-        generateEnemy(N);
+        generateEnemy(Zone,N);
         assertz(isEnemy(TempX,TempY)),
         Next is N - 1,
-        generateEnemy(Next)
+        generateEnemy(Zone,Next)
     ),!.
 
 zone(Zone) :-
@@ -142,6 +145,12 @@ printX(X,Y) :-
 printX(X,Y) :-
     isPlayer(X,Y),
     print('P'),
+    NewY is Y+1,
+    printX(X,NewY).
+
+printX(X,Y) :- 
+    isEnemy(X,Y),
+    print('X'),
     NewY is Y+1,
     printX(X,NewY).
 
