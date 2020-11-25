@@ -24,9 +24,12 @@ start :-
     asserta(positionY(1)),!.
 
 
+/* playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)) */
+
 start :-
     init(_),
-    print('Permainan sudah dimulai!'),!.
+    print('Permainan sudah dimulai!'),
+    generateEnemy(7),!.
 
 
 level :-
@@ -125,6 +128,10 @@ removeEnemy :-
     retract(enemyHealth(_)),
     retract(enemyAttack(_)),
     retract(inBattle(_)),
+    positionX(X),
+    positionY(Y),
+    retract(isEnemy(X,Y)),
+    generateEnemy(1),
     print('Keluar mode battle\n').
 
 

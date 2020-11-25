@@ -1,8 +1,14 @@
+:- dynamic(inventory/13).
+
+:- include('items.pl')
 
 /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
 /* playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
 
 /* STATUS */
+initPlayer :-
+
+
 status :-
     init(_),
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
@@ -25,13 +31,117 @@ RequiredXp(Level, LevelXp) :-
 
 /* PLAYER INVENTORY */
 /* inventory(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense). */
-bag :-
+showItem :-
     init(_),
 
-showItemList :-
-    findall(Nama, )
+printItemList([]).
+printItemList([H|T]) :-
+    format('> ~w', H), nl,
+    printItemList(T).
 
-  /* Show Item's Buffs */
+showUsableItemList :-
+
+    /* sub fungsi dari showUsableItemList */
+showWeapons(ListWeapons) :-     % show equipped
+    write('Your Weapons: '), nl,
+    showEquippedWeapon,
+    playerInfo(_, Job, _, _, _),
+    findall(Nama, inventory(_, Nama, weapon, Job, _, _, _, _, _, _, _, _, _), ListWeapons),
+    printItemList(ListWeapons).
+showEquippedWeapon :-
+    equippedWeapon(ID),
+    inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _),
+    format('~w (equipped)', Nama), nl, !.
+showEquippedWeapon :-
+    write('No weapons equipped.'), nl.
+
+showWeapons(ListArmors) :-
+    write('Your Armors: '), nl,
+    showEquippedArmor,
+    playerInfo(_, Job, _, _, _),
+    findall(Nama, inventory(_, Nama, armor, Job, _, _, _, _, _, _, _, _, _), ListArmors).
+    printItemList(ListArmors).
+showEquippedArmor :-
+    equippedArmor(ID),
+    inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _),
+    format('~w (equipped)', Nama), nl, !.
+showEquippedArmor :-
+    write('No armors equipped.'), nl.
+
+showAccessory(ListArmors) :-
+    write('Your Accessories: '), nl,
+    showEquippedArmor,
+    playerInfo(_, Job, _, _, _),
+    findall(Nama, inventory(_, Nama, armor, Job, _, _, _, _, _, _, _, _, _), ListArmors).
+    printItemList(ListArmors).
+showEquippedArmor :-
+    equippedArmor(ID),
+    inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _),
+    format('~w (equipped)', Nama), nl, !.
+showEquippedArmor :-
+    write('No armors equipped.'), nl.
+
+    /* unusable Items */
+showUnusableItemList :-
+
+
+/* Init Items */
+initItem(Job) :-
+
+
+/* Use Item */
+useItem(ID) :-      % untuk potion
+    inventory(ID, Nama, potion, JobItem, LevelItem, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    usePotion(ID).
+useItem(ID) :-      % cek prasyarat Item
+    inventory(ID, Nama, Tipe, JobItem, LevelItem, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    playerInfo(_, JobPlayer, _, LevelPlayer, _), !
+    LevelPlayer < LevelItem, !,
+    JobItem =/= JobPlayer, !, fail.
+useItem(ID) :-
+    inventory(ID, Nama, Tipe, JobItem, LevelItem, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    (
+        Tipe =:= weapon -> useWeapon(ID);
+        (
+            Tipe =:= armor -> useArmor(ID);
+            (
+                Tipe =:= accessory -> useAccessory(ID)
+            )
+        )
+    )
+    /* untuk use dibawah, Player dapat memakai itemnya (level dan job valid) */
+useWeapon(ID) :-       
+    equippedWeapon(_),
+    retract(equippedWeapon(_)),
+    asserta(equippedWeapon(ID)), !.
+useWeapon(ID) :-       
+    asserta(equippedWeapon(ID)), !.
+
+useArmor(ID) :-       
+    equippedArmor(_),
+    retract(equippedArmor(_)),
+    asserta(equippedArmor(ID)), !.
+useArmor(ID) :-       
+    asserta(equippedArmor(ID)), !.
+
+useAccessory(ID) :-       
+    equippedAccessory(_),
+    retract(equippedAccessory(_)),
+    asserta(equippedAccessory(ID)), !.
+useAccessory(ID) :-       
+    asserta(equippedAccessory(ID)), !.
+
+
+/* Delete and Add Player Item */
+addItem(ID) :-
+    item(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    asserta(inventory(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)).
+delItem(ID) :-
+    inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _),
+    retract(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _)).
+
+
+  /* Show Items Status */
     /* Regen */
 showItemHealthRegen(ID) :-
     inventory(ID, _, _, _, _, _, _, _, HealthRegen, _, _, _, _),
