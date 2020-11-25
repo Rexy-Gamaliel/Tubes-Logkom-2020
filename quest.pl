@@ -7,8 +7,8 @@
 
 quest :-
     initQuest(_),
-    print('Anda sudah menerima sebuah quest.'),!.
-    mission(Num1,Num2,Num3),
+    print('Anda sudah menerima sebuah quest.'),
+    mission(Num1,Num2,Num3,_),
     print('Slime  : '), write(Num1),nl,
     print('Wolf   : '), write(Num2),nl,
     print('Goblin : '), write(Num3),nl,!.
@@ -29,6 +29,7 @@ quest :-
 
 cekQuest :-
     mission(0,0,0,AccEXP),
+    print(AccEXP),!.
     /* Selanjutnya, Exp Pemain naik sebesar AccEXP 
     tapi implementasinya belum tau gmn */
 
@@ -38,7 +39,7 @@ questDo(1) :-
     New is Num1 - 1,
     New >= 0,
     NewEXP is EXP + 1,
-    retract(mission(_,_,_,_))
+    retract(mission(_,_,_,_)),
     asserta(mission(New,Num2,Num3,NewEXP)),
     cekQuest,!.
 
@@ -48,7 +49,7 @@ questDo(2) :-
     New is Num2 - 1,
     New >= 0,
     NewEXP is EXP + 2,
-    retract(mission(_,_,_,_))
+    retract(mission(_,_,_,_)),
     asserta(mission(Num1,New,Num3,NewEXP)),
     cekQuest,!.
 
@@ -58,7 +59,7 @@ questDo(3) :-
     New is Num3 - 1,
     New >= 0,
     NewEXP is EXP + 3,
-    retract(mission(_,_,_,_))
+    retract(mission(_,_,_,_)),
     asserta(mission(Num1,Num2,New,NewEXP)),
     cekQuest,!.
 

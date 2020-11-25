@@ -10,6 +10,8 @@
 :- dynamic(cooldown/1).
 
 :- include('map.pl').
+:- include('command.pl').
+:- include('quest.pl').
 
 start :-
     \+ init(_),
