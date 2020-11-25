@@ -63,7 +63,7 @@ item(333, magnusScepter, accessory, sorcerer, 5, 0, 0, 0, 0, 0, 5, 10, 0).
 
 /* Potions 0 _ _ */
   /* item(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense). */
-item(001, healthPotion, potion, unrestricted, 0, 0, 0, 0, 10, 0, 0, 0, 0).
+item(001, healthPotion, potion, unrestricted, 0, 0, 0, 0, 20, 0, 0, 0, 0).
 item(002, staminaPotion, potion, unrestricted, 0, 0, 0, 0, 0, 10, 0, 0, 0).
 item(003, manaPotion, potion, unrestricted, 0, 0, 0, 0, 0, 0, 10, 0, 0).
 item(009, xpPotion, potion, unrestricted, 0, 0, 0, 0, 0, 0, 0, 0, 0).  % implementasi ??

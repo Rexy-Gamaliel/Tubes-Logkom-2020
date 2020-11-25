@@ -46,16 +46,21 @@ getBound(3,8,14,8,14).
 
 /* lokasi shop, masih ngasal dulu */
 shopX(4).
-shopY(4).
+shopY(6).
 
 /* lokasi quest, masih ngasal dulu */
-questX(4).
-questY(8).
+questX(6).
+questY(4).
+
+/* lokasi dragon */
+isEnemy(14,14).
 
 initPlayer :-
-    asserta(cure(1)),
     asserta(positionX(1)),
     asserta(positionY(1)).
+    generateEnemy(1,7),  /* generate lokasi musuh 7 titik setiap zone */
+    generateEnemy(2,7),
+    generateEnemy(3,7).
 
 generateEnemy(_,0) :- !.
 

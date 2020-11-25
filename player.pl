@@ -29,7 +29,9 @@ RequiredXp(Level, LevelXp) :-
     LevelXp is (15 + 5 * Level).
 
 
-/* PLAYER INVENTORY */
+/*** PLAYER INVENTORY ***/
+
+/* SHOW ITEM */
 /* inventory(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense). */
 showItem :-
     init(_),
@@ -41,7 +43,8 @@ printItemList([H|T]) :-
 
 showUsableItemList :-
 
-    /* sub fungsi dari showUsableItemList */
+/* sub fungsi dari showUsableItemList */
+    /* Weapons */
 showWeapons(ListWeapons) :-     % show equipped
     write('Your Weapons: '), nl,
     showEquippedWeapon,
@@ -55,7 +58,8 @@ showEquippedWeapon :-
 showEquippedWeapon :-
     write('No weapons equipped.'), nl.
 
-showWeapons(ListArmors) :-
+    /* Armors */
+showArmors(ListArmors) :-
     write('Your Armors: '), nl,
     showEquippedArmor,
     playerInfo(_, Job, _, _, _),
@@ -68,18 +72,49 @@ showEquippedArmor :-
 showEquippedArmor :-
     write('No armors equipped.'), nl.
 
-showAccessory(ListArmors) :-
-    write('Your Accessories: '), nl,
-    showEquippedArmor,
+    /* Accessories */
+showAccessories(ListAccessories) :-
+    write('Your Accessories (auto equip): '), nl,
     playerInfo(_, Job, _, _, _),
-    findall(Nama, inventory(_, Nama, armor, Job, _, _, _, _, _, _, _, _, _), ListArmors).
-    printItemList(ListArmors).
-showEquippedArmor :-
-    equippedArmor(ID),
-    inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _),
-    format('~w (equipped)', Nama), nl, !.
-showEquippedArmor :-
-    write('No armors equipped.'), nl.
+    findall(Nama, inventory(_, Nama, accessory, Job, _, _, _, _, _, _, _, _, _), ListAccessories).
+    printItemList(ListAccessories).
+
+
+showPotions :- 
+    write('Your Potions: '), nl,
+    findall(Nama, inventory(_, Nama, potion, _, _, _, _, _, _, _, _, _, _), ListPotions).
+    countPotions(healthPotion, ListPotions, NumHealthPotion), 
+    countPotions(staminaPotion, ListPotions, NumStaminaPotion), 
+    countPotions(manaPotion, ListPotions, NumManaPotion), 
+    countPotions(xpPotion, ListPotions, NumXpPotion), 
+    showHealthPotions(NumHealthPotion),
+    showStaminaPotions(NumHealthPotion),
+    showManaPotions(NumHealthPotion),
+    showXpPotions(NumXpPotion).
+
+showHealthPotions(0), !.
+showHealthPotions(NumHealthPotion) :-
+    format('healthPotion (x~d)', NumHealthPotion), nl.
+showStaminaPotions(0), !.
+showStaminaPotions(NumHealthPotion) :-
+    format('staminaPotion (x~d)', NumStaminaPotion), nl.
+showManaPotions(0), !.
+showManaPotions(NumHealthPotion) :-
+    format('manaPotion (x~d)', NumManaPotion), nl.
+showXpPotions(0), !.
+showXpPotions(NumXpPotion) :-
+    format('xpPotion (x~d)', NumXpPotion), nl.
+
+
+countPotions(PotionName, [], 0).
+countPotions(PotionName, [H|T], Num) :-
+    PotionName = H, !,
+    count(PotionName, List, NumNext),
+    Num is NumNext + 1.
+countPotions(PotionName, [H|T], Num) :-
+    countPotions(PotionName, T, Num)
+
+
 
     /* unusable Items */
 showUnusableItemList :-
