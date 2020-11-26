@@ -51,3 +51,17 @@ tes :-
                             );
         write('Kamu gagal menyerangnya!'), nl
     ),!.
+
+test1 :-
+    asserta(tesaja(5)),
+    tesaja(X), /*tes*/
+    Temp is X + 2,
+    (
+        (Temp < 10) ->  Temp1 is 10,
+                        write(Temp1), nl
+    ),              
+    (
+        (Temp < 8) ->      Temp2 is 5,
+                            write(Temp2), nl
+    ),!.
+    
