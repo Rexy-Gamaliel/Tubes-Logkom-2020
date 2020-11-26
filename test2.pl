@@ -174,8 +174,7 @@ attack :-
         (PlayerChance =\= 5) -> playerAttack,
                                 write(EnemyName), write(' terkena basic attack mu.'), nl, nl;
         write('Ah, seranganmu meleset!'), nl, nl
-    ).
-
+    ),
     curBattleStatus,
     random(1, 11, EnemyChance),
     (
