@@ -35,7 +35,7 @@ item(413, knightsArmor, armor, swordsman, 11, 45, -20, 0, 0, 0, 0, 0, 18).
   /* Archer 4 2 _ */
 item(421, leatherArmor, armor, archer, 1, 10, -5, 0, 0, 0, 0, 0, 5).
 item(422, hunterArmor, armor, archer, 6, 20, 0, 0, 0, 0, 0, 0, 9).
-item(423, daedricArmor, armor, archer, 12, 30, 15, 0, 0, 0, 0, 0, 13).*/
+item(423, daedricArmor, armor, archer, 12, 30, 15, 0, 0, 0, 0, 0, 13).
 
   /* Sorcerer 4 3 _ */
 item(431, noviceRobe, armor, sorcerer, 1, 8, 0, MaxMana, 0, 0, 4, 0, 5).
@@ -66,5 +66,4 @@ item(333, magnusScepter, accessory, sorcerer, 5, 0, 0, 0, 0, 0, 5, 10, 0).
 item(001, healthPotion, potion, unrestricted, 0, 0, 0, 0, 20, 0, 0, 0, 0).
 item(002, staminaPotion, potion, unrestricted, 0, 0, 0, 0, 0, 10, 0, 0, 0).
 item(003, manaPotion, potion, unrestricted, 0, 0, 0, 0, 0, 0, 10, 0, 0).
-item(009, xpPotion, potion, unrestricted, 0, 0, 0, 0, 0, 0, 0, 0, 0).  % implementasi ??
-
+item(009, xpPotion, potion, unrestricted, 0, 0, 0, 0, 0, 0, 0, 0, 0). 

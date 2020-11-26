@@ -1,4 +1,3 @@
-
 /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
 /* playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
 
@@ -95,7 +94,7 @@ assertaLine([]) :- !.
 
 assertaLine([H|T]):-
     asserta(H),
-    assertaLine(L), !.
+    assertaLine(T), !.
 
 
 readLines(Stream,[]) :-

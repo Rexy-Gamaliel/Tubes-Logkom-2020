@@ -4,6 +4,11 @@
 :- include('player.pl').
 :- include('map.pl').
 :- include('command.pl').
+:- include('items.pl').
+:- include('quest.pl').
+:- include('battle.pl').
+:- include('file.pl').
+:- include('shop.pl').
 
 new :-
     write('                  '),nl,
@@ -53,7 +58,7 @@ checkJob(Job) :-
     Job >= 1,
     Job =< 3, !.
 checkJob(_) :-
-  write('Pilih job yang valid!'), nl.
+    write('Pilih job yang valid!'), nl.
 
 initJob(Username, Job) :-
     /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
