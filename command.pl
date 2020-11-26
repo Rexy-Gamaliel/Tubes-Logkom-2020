@@ -217,6 +217,8 @@ w :-
     map,!.
 
 /* command teleport */
+/* rencananya biar si player gk op, kita bikin aja si teleport ini
+cuma bisa dipake kalo si player punya item teleporter*/
 teleport(X,Y) :-
     init(_),
     \+ inBattle(_),
