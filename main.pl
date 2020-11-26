@@ -4,6 +4,11 @@
 :- include('player.pl').
 :- include('map.pl').
 :- include('command.pl').
+:- include('items.pl').
+:- include('quest.pl').
+:- include('battle.pl').
+:- include('file.pl').
+:- include('shop.pl').
 
 new :-
     write('                  '),nl,
@@ -24,7 +29,7 @@ new :-
 initFirst :-
     write('Welcome to Genshin Asik, Adventurer.'), nl,
     write('What is your name?'), nl,
-    read(Username), nl
+    read(Username), nl,
     format('Welcome, ~w !', Username), nl, nl,
     repeat,
     write('Choose your job (1, 2, 3):'), nl,
@@ -40,7 +45,7 @@ initFirst :-
             (
                 Job =:= 3 -> write('You chose Sorcerer, lets explore the world'), nl;
                 (
-                  write ('Masukkan angka yang valid'), nl
+                  write ('Masukkan angka yang valid'), nl;
                 )
             )
         )
@@ -53,7 +58,7 @@ checkJob(Job) :-
     Job >= 1,
     Job =< 3, !.
 checkJob(_) :-
-  write('Pilih job yang valid!'), nl.
+    write('Pilih job yang valid!'), nl.
 
 initJob(Username, Job) :-
     /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
@@ -77,7 +82,7 @@ initJob(Username, Job) :-
                     playerInfo(Username, sorcerer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _))
             )
         )
-    )
+    ).
 
 start :-
     \+init(_),
@@ -104,9 +109,9 @@ quit :-
     retract(init(_)),
     retract(positionX(_)),
     retract(positionY(_)),
-    forall(playerStatus(_, _, _, _, _, _, _, _, _, _, _)) (
+    forall(playerStatus(_, _, _, _, _, _, _, _, _, _, _)), (
       retract(playerStatus(_, _, _, _, _, _, _, _, _, _, _))
     ),
-    forall(playerInfo(_, _, _, _, playerStatus(_, _, _, _, _, _, _, _, _, _, _)) (
+    forall(playerInfo(_, _, _, _, playerStatus(_, _, _, _, _, _, _, _, _, _, _)), (
       retract(playerinfo(_, _, _, _, playerStatus(_, _, _, _, _, _, _, _, _, _, _)))
     ).

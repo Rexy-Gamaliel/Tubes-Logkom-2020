@@ -12,6 +12,7 @@
 :- include('map.pl').
 :- include('command.pl').
 :- include('quest.pl').
+:- include('player.pl').
 
 start :-
     \+ init(_),

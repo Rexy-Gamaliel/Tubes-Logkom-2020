@@ -5,6 +5,22 @@
 /* jadi nanti AccEXP tuh total EXP yg diterima pemain setelah selesai quest 
     AccEXP = Slime*1 + Wolf*2 + Goblin*3 (Opsional) */
 
+/* EXP Update + Next Level */
+naikExp(AddEXP) :-
+    playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    GetEXP is Xp + AddEXP,
+    RequiredXp(Level, LevelXp),
+    (
+        GetEXP >= LevelXp ->
+        NewEXP is GetEXP - LevelXp,
+        NewLevel is Level+1;
+        NewEXP = GetEXP,
+        NewLevel = Level 
+    ),
+    retract(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+    asserta(playerInfo(Username, Job, NewEXP, NewLevel, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))), !.
+
+/* Questing */
 quest :-
     initQuest(_),
     print('Anda sudah menerima sebuah quest.'),
@@ -29,11 +45,11 @@ quest :-
 
 cekQuest :-
     mission(0,0,0,AccEXP),
-    print(AccEXP),!.
-    /* Selanjutnya, Exp Pemain naik sebesar AccEXP 
-    tapi implementasinya belum tau gmn */
+    write('Quest berhasil. Kamu mendapat Exp sebesar '), print(AccEXP), nl,
+    naikExp(AccEXP), !.
+    
 
-/* buat slime */
+/* Quest buat slime */
 questDo(1) :-
     mission(Num1,Num2,Num3,EXP),
     New is Num1 - 1,
@@ -43,7 +59,7 @@ questDo(1) :-
     asserta(mission(New,Num2,Num3,NewEXP)),
     cekQuest,!.
 
-/* buat wolf*/
+/* Quest buat wolf */
 questDo(2) :-
     mission(Num1,Num2,Num3,EXP),
     New is Num2 - 1,
@@ -53,7 +69,7 @@ questDo(2) :-
     asserta(mission(Num1,New,Num3,NewEXP)),
     cekQuest,!.
 
-/* buat goblin*/
+/* Quest buat goblin */
 questDo(3) :-
     mission(Num1,Num2,Num3,EXP),
     New is Num3 - 1,
@@ -63,6 +79,7 @@ questDo(3) :-
     asserta(mission(Num1,Num2,New,NewEXP)),
     cekQuest,!.
 
+/* Quest tergantung zona */
 questDo :-
     zone(Z),
     questDo(Z),!.

@@ -55,7 +55,7 @@ questY(4).
 /* lokasi dragon */
 isEnemy(14,14).
 
-initPlayer :-
+initPlayerPosition :-
     asserta(positionX(1)),
     asserta(positionY(1)).
     generateEnemy(1,7),  /* generate lokasi musuh 7 titik setiap zone */
