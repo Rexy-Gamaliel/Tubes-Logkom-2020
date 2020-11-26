@@ -2,8 +2,8 @@
 
 /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
 /* playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
-playerInfo(player, swordsman, 0, 1, playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4)).
-playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4).
+/*playerInfo(player, swordsman, 0, 1, playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4)).
+playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4).*/
 
 /* enemyInfo(ID, EnemyName, EnemyType, EnemyLevel, EnemyMaxHealth, EnemyHealthRegen, EnemyBasicAttack, EnemySpecialAttack) */
 enemyInfo(1, slimeA, slime, 1, 80, 3, 11, 19).
