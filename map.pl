@@ -37,31 +37,45 @@ lebar(15).
                               14
         D : dragon
 */
+/* Zone Bound */
+/* getBound(NomorZona, LowerBoundX, UpperBoundX, LowerBoundY, UpperBoundY) */
+getBound(0,1,7,1,7).
+getBound(1,8,14,1,7).
+getBound(2,1,7,8,14).
+getBound(3,8,14,8,14).
 
 /* lokasi shop, masih ngasal dulu */
 shopX(4).
-shopY(4).
+shopY(6).
 
 /* lokasi quest, masih ngasal dulu */
-questX(4).
-questY(8).
+questX(6).
+questY(4).
+
+/* lokasi dragon */
+isEnemy(14,14).
 
 initPlayer :-
-    asserta(cure(1)),
     asserta(positionX(1)),
     asserta(positionY(1)).
+    generateEnemy(1,7),  /* generate lokasi musuh 7 titik setiap zone */
+    generateEnemy(2,7),
+    generateEnemy(3,7).
 
-generateEnemy(0) :- !.
+generateEnemy(_,0) :- !.
 
-generateEnemy(N) :-
-    random(8,15,TempY),
-    random(1,8,TempX),
+generateEnemy(Zone,N) :-
+    getBound(Zone,LowerX,UpperX,LowerY,UpperY),
+    UpY is UpperY+1,
+    UpX is UpperX+1,
+    random(LowerY,UpY,TempY),
+    random(LowerX,UpX,TempX),
     (
         isEnemy(TempX,TempY) ->
-        generateEnemy(N);
+        generateEnemy(Zone,N);
         assertz(isEnemy(TempX,TempY)),
         Next is N - 1,
-        generateEnemy(Next),
+        generateEnemy(Zone,Next)
     ),!.
 
 zone(Zone) :-
@@ -69,37 +83,13 @@ zone(Zone) :-
     positionY(Y),
     cekZone(X,Y,Zone),!.
 
-/* Safe Zone */
-cekZone(X,Y,Zone) :-
-    X >= 1,
-    X =< 7,
-    Y >= 1,
-    Y =< 7,
-    Zone = 0,!.
-
-/* Zone # 1*/
-cekZone(X,Y,Zone) :-
-    X >= 8,
-    X =< 14,
-    Y >= 1,
-    Y =< 7,
-    Zone = 1,!.
-
-/* Zone # 2*/
-cekZone(X,Y,Zone) :-
-    X >= 1,
-    X =< 7,
-    Y >= 8,
-    Y =< 14,
-    Zone = 2,!.
-
-/* Zone # 3*/
-cekZone(X,Y,Zone) :-
-    X >= 8,
-    X =< 14,
-    Y >= 8,
-    Y =< 14,
-    Zone = 3,!.
+cekZone(X,Y,Z) :-
+    getBound(Zone,LowerX,UpperX,LowerY,UpperY),
+    X >= LowerX,
+    X =< UpperX,
+    Y >= LowerY,
+    Y =< UpperY,
+    Z = Zone,!.
 
 isKiri(_,Y) :- 
     Y =:= 0.
@@ -160,6 +150,12 @@ printX(X,Y) :-
 printX(X,Y) :-
     isPlayer(X,Y),
     print('P'),
+    NewY is Y+1,
+    printX(X,NewY).
+
+printX(X,Y) :- 
+    isEnemy(X,Y),
+    print('X'),
     NewY is Y+1,
     printX(X,NewY).
 

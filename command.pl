@@ -215,3 +215,24 @@ w :-
     isAtas(NextX, TempY),
     write('Ada dinding!'),
     map,!.
+
+/* command teleport */
+teleport(X,Y) :-
+    init(_),
+    \+ inBattle(_),
+    \+ isAtas(X,Y),
+    \+ isBawah(X,Y),
+    \+ isKanan(X,Y),
+    \+ isKiri(X,Y),
+    retract(positionX(_)),
+    retract(positionY(_)),
+    asserta(positionX(X)),
+    asserta(positionY(Y)),
+    map,
+    (
+        isShop(X,Y) ->
+        print('Anda berada di shop, command "shop" untuk mengakses shop');
+        isEnemy(X,Y) ->
+        print('Anda bertemu musuh'),nl,
+        battle
+    ),!.

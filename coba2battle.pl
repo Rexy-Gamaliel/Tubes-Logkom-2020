@@ -10,6 +10,8 @@
 :- dynamic(cooldown/1).
 
 :- include('map.pl').
+:- include('command.pl').
+:- include('quest.pl').
 
 start :-
     \+ init(_),
@@ -21,15 +23,17 @@ start :-
     asserta(pattack(50)),
     asserta(health(300)),
     asserta(positionX(1)),
-    asserta(positionY(1)),!.
+    asserta(positionY(1)),
+    generateEnemy(1,7),
+    generateEnemy(2,7),
+    generateEnemy(3,7),!.
 
 
 /* playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)) */
 
 start :-
     init(_),
-    print('Permainan sudah dimulai!'),
-    generateEnemy(7),!.
+    print('Permainan sudah dimulai!'),!.
 
 
 level :-
