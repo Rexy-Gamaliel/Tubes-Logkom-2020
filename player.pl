@@ -144,7 +144,7 @@ showItem :-
     write('         INVENTORY            '), nl, nl,
     showUsableItemList, nl,
     showUnusableItemList.
-*/
+
 
 printItemList([], []).
 printItemList([H|T], [H2|T2]) :-
@@ -277,30 +277,37 @@ showUnusableItemList :-
     playerInfo(_, Job, _, PlayerLevel, _),
     (
         Job = swordsman ->
-            showUnusableItemByJob(archer), showUnusableItembyJob(sorcerer);
+            showUnusableItemByJob(archer), showUnusableItemByJob(sorcerer);
         (
             Job = archer ->
-                showUnusableItemByJob(swordsman), showUnusableItembyJob(sorcerer);
+                showUnusableItemByJob(swordsman), showUnusableItemByJob(sorcerer);
             (
                 Job = sorcerer ->
-                    showUnusableItembyJob(swordsman), showUnusableItemByJob(archer)
+                    showUnusableItemByJob(swordsman), showUnusableItemByJob(archer)
             )
         )
     ), nl,
-    write('Your level isnt enough to use these: '), nl,
     showUnusableItemByLevel(PlayerLevel).
 
 % inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)
 showUnusableItemByJob(Job) :-
     \+ inventory(_, _, _, Job, _, _, _, _, _, _, _, _, _, _), !.
 showUnusableItemByJob(Job) :-
-    write('You dont have the appropriate Job to use these: '), nl,
+    write('Job-mu tidak sesuai untuk menggunakan item ini: '), nl,
     forall(inventory(Nama, _, _, Job, _, Amount, _, _, _, _, _, _, _, _),
         (
             format('> ~w (x ~d)', [Nama, Amount]), nl
         )
     ), nl.
 showUnusableItemByLevel(PlayerLevel) :-
+    forall(inventory(_, _, _, _, ItemLevel, _, _, _, _, _, _, _, _, _),
+        (
+            PlayerLevel > ItemLevel
+        )
+    ),
+    !.
+showUnusableItemByLevel(PlayerLevel) :-
+    write('Levelmu tidak cukup untuk menggunakan item ini: '), nl,
     forall(inventory(Nama, _, _, _, ItemLevel, Amount, _, _, _, _, _, _, _, _),
         (
             ItemLevel > PlayerLevel ->
