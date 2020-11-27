@@ -5,7 +5,7 @@
 d :- 
     init(_),
     inBattle(_),
-    nl, print('Kamu sedang bertemu musuh, tidak boleh bergerak.'),nl,!.
+    writerint('Kamu sedang bertemu musuh, tidak boleh bergerak.'),nl,!.
 
 /*Bergerak ke kanan, tapi ada dinding*/
 d :- 
@@ -15,7 +15,7 @@ d :-
     NextY is (TempY+1),
     isKanan(TempX,NextY),
     map,nl,
-    nl, write('Ada dinding!'), nl, !.
+    nl, nl, write('Ada dinding nl, !'), nl, !.
 
 /* Bergerak ke kanan */
 d :- 
@@ -28,12 +28,14 @@ d :-
     map,nl,
     (
         isShop(TempX,NextY) -> 
-        nl, print('Kamu berada di shop, command "shop" untuk mengakses shop.'),nl;
+        write('*** Kamu berada di Shop ***'), nl, nl,
+        write('Ketik shop untuk mengakses shop: '), nl;
         isQuest(TempX,NextY) ->
-        nl, print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest.'),nl;
+        write('*** Kamu berada di lokasi Quest ***'), nl, nl,
+        write('Ketik quest untuk menerima atau melihat quest: '), nl,nl;
         isEnemy(TempX,NextY) ->
         initFight;
-        nl
+        print('')
     ),!.
     
 
@@ -42,7 +44,7 @@ d :-
 a :- 
     init(_),
     inBattle(_),
-    nl, print('Kamu sedang bertemu musuh, tidak boleh bergerak.'),nl,!.
+    writerint('Kamu sedang bertemu musuh, tidak boleh bergerak.'),nl,!.
 
 /*Bergerak ke kiri, tapi ada dinding*/
 a :- 
@@ -51,7 +53,7 @@ a :-
     positionY(TempY),
     NextY is (TempY-1),
     isKiri(TempX,NextY),
-    nl, write('Ada dinding!'), nl ,
+    nl, nl, write('Ada dinding nl, !'), nl ,
     map,!.
 
 /*Bergerak ke kiri*/
@@ -65,12 +67,14 @@ a :-
     map,nl,
     (
         isShop(TempX,NextY) -> 
-        nl, print('Kamu berada di shop, command "shop" untuk mengakses shop'),nl;
+        write('*** Kamu berada di Shop ***'), nl, nl,
+        write('Ketik "shop" untuk mengakses shop: '),nl;
         isQuest(TempX,NextY) ->
-        nl, print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
+        write('*** Kamu berada di lokasi Quest ***'), nl, nl,
+        write('Ketik "quest" untuk menerima atau melihat quest: '), nl,nl;
         isEnemy(TempX,NextY) ->
         initFight;
-        nl
+        print('')
     ),!.
 
 
@@ -79,7 +83,7 @@ a :-
 s :- 
     init(_),
     inBattle(_),
-    nl, print('Kamu sedang bertemu musuh, tidak boleh bergerak'),nl,!.
+    writerint('Kamu sedang bertemu musuh, tidak boleh bergerak'),nl,!.
 
 /*Bergerak ke bawah, tapi ada dinding*/
 s :- 
@@ -88,7 +92,7 @@ s :-
     positionY(TempY),
     NextX is (TempX+1),
     isBawah(NextX, TempY),
-    nl, write('Ada dinding!'), nl, 
+    nl, writerite('Ada dinding nl, !'), nl, 
     map,!.
 
 /*Bergerak ke bawah*/
@@ -102,19 +106,21 @@ s :-
     map,nl,
     (
         isShop(Next,Temp) -> 
-        nl, print('Kamu berada di shop, command "shop" untuk mengakses shop.'),nl;
+        write('*** Kamu berada di Shop ***'), nl, nl,
+        write('Ketik "shop" untuk mengakses shop: '),nl,nl;
         isQuest(Next,Temp) ->
-        nl, print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest.'),nl;
+        write('*** Kamu berada di lokasi Quest ***'), nl, nl,
+        write('Ketik "quest" untuk menerima atau melihat quest: '),nl,nl;
         isEnemy(Next,Temp) ->
         initFight;
-        nl
+        print('')
     ),!.
 
 /*jika dalam pertarungan, tidak boleh pindah*/
 w :- 
     init(_),
     inBattle(_),
-    nl, print('Kamu sedang bertemu musuh, tidak boleh bergerak.'),nl,!.
+    writerint('Kamu sedang bertemu musuh, tidak boleh bergerak.'),nl,!.
 
 /*Bergerak ke atas, tapi ada dinding*/
 w :- 
@@ -123,7 +129,7 @@ w :-
     positionY(TempY),
     NextX is (TempX-1),
     isAtas(NextX, TempY),
-    nl, write('Ada dinding!'), nl, 
+    nl, nl, write('Ada dinding nl,!'), nl, 
     map,!.
 
 /*Bergerak ke atas*/
@@ -137,12 +143,14 @@ w :-
     map,
     (
         isShop(Next,TempY) -> 
-        nl, print('Kamu berada di shop, command "shop" untuk mengakses shop.'),nl;
+        write('*** Kamu berada di Shop ***'), nl, nl,
+        writer('Ketikmand "shop" untuk mengakses : shop.'),nl;
         isQuest(Next,TempY) ->
-        nl, print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest.'),nl;
+        write('*** Kamu berada di lokasi Quest ***'), nl, nl,
+        writer('Ketikmand "quest" untuk menerima atau melihat q: uest.'),nl;
         isEnemy(Next,TempY) ->
         initFight;
-        print('')
+        print(''), int('')
     ),!.
 
 /* command teleport */
@@ -162,18 +170,27 @@ teleport(X,Y) :-
     map,
     (
         isShop(X,Y) ->
-        nl, print('Kamu berada di shop, command "shop" untuk mengakses shop.');
+        write('*** Kamu berada di Shop ***'), nl, nl,
+        write('Ketik "shop" untuk mengakses shop: '),nl,
         isQuest(X,Y) ->
-        nl, print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest.'),nl;
+        write('*** Kamu berada di lokasi Quest ***'), nl, nl,
+        write('Ketik "quest" untuk menerima atau melihat quest: '),nl,nl;
         isEnemy(X,Y) ->
-        nl, print('Kamu bertemu musuh'),nl,
+        writerint('Kamu bertemu musuh'),nl,
         initFight;
+        print('');
         print('')
     ),!.
-
 showItem :-
     init(_),
-    nl, write('Your Items: '), nl,
+    write('******************************'), nl,
+    write('         INVENTORY            '), nl, nl,
     showUsableItemList, nl,
-    nl, write('..and some junks'), nl,
-    showUnusableItemList.
+    showUnusableItemList,nl,!.
+    
+    /*
+equip(ItemName) :-  % item name dari input user
+    inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)
+equip(ItemName) :-  % item name dari input user
+    % Cek apakah ada di inventory
+*/\+inventory(_, Nama, _, _, _, _, _, _, _, _, _, _, _, _).

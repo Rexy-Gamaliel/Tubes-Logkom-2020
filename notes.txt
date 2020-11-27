@@ -1,10 +1,10 @@
 todo :
 -- habis bertarung exp belum nambah,    
--- update gold sesudah battle kyknya masih belum bener  
--- generate lokasi enemy setelah battle belum bener. (Terakhir compile, bisa)
--- looping waktu milih job msh belum bener
--- waktu battle darah player belum berkurang. (Di aku berubah)
--- showPotion blm muncul (inBatlle)
+-- update gold sesudah battle kyknya masih belum bener  [fixed]
+-- generate lokasi enemy setelah battle belum bener. [fixed/?]
+-- looping waktu milih job msh belum bener  [fixed]
+-- waktu battle darah player belum berkurang. [fixed/?]
+-- showPotion blm muncul (inBatlle) 
 -- showItems error
 -- Abis usePotion di luar battle, terus ke musuh, error.
 
