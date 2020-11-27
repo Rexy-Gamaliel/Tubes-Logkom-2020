@@ -144,10 +144,10 @@ w :-
     (
         isShop(Next,TempY) -> 
         write('*** Kamu berada di Shop ***'), nl, nl,
-        writer('Ketikmand "shop" untuk mengakses : shop.'),nl;
+        write('Ketik "shop" untuk mengakses : shop.'),nl;
         isQuest(Next,TempY) ->
         write('*** Kamu berada di lokasi Quest ***'), nl, nl,
-        writer('Ketikmand "quest" untuk menerima atau melihat q: uest.'),nl;
+        write('Ketik "quest" untuk menerima atau melihat q: uest.'),nl;
         isEnemy(Next,TempY) ->
         initFight;
         print(''), int('')
@@ -186,7 +186,8 @@ showItem :-
     write('******************************'), nl,
     write('         INVENTORY            '), nl, nl,
     showUsableItemList, nl,
-    showUnusableItemList,nl,!.
+    showUnusableItemLisshowUnusableItemList,nl,!.
+
     
     /*
 equip(ItemName) :-  % item name dari input user

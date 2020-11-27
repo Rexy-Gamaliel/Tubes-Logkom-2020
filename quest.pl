@@ -38,17 +38,32 @@ quest :-
     random(0,11,Num2),
     random(0,11,Num3),
     asserta(mission(Num1,Num2,Num3,0)),
-    quest,!.
+    print('Kamu sudah mendapat quest baru.\n'),
+    print('Slime  : '), write(Num1),nl,
+    print('Wolf   : '), write(Num2),nl,
+    print('Goblin : '), write(Num3),nl,!.
 
 quest :-
     init(_),
     print('Kamu tidak berada di lokasi quest!'),!.
 
 cekQuest :-
+    \+ mission(0,0,0,_), !.
+
+cekQuest :-
     mission(0,0,0,AccEXP),
     write('Quest berhasil. Kamu mendapat Exp sebesar '), print(AccEXP), nl,
-    naikExp(AccEXP),
+    playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    NewEXP is Xp + AccEXP,
+    retract(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+    asserta(playerInfo(Username, Job, NewEXP, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+    updatePlayerStatus,
+    gold(G),
+    NewG is G + 1000,
+    retract(gold(G)),
+    asserta(gold(NewG)),
     retract(initQuest(_)),
+    retract(mission(_,_,_,_)), !.
     retract(mission(_,_,_,_)).
 
 cekQuest :- !.
@@ -79,11 +94,14 @@ questDo(3) :-
     New is Num3 - 1,
     New >= 0,
     NewEXP is EXP + 3,
-    retract(mission(_,_,_,_)),
-    asserta(mission(Num1,Num2,New,NewEXP)),
-    cekQuest,!.
-
+    retract(mission(_,_,_,_)).
 /* Quest tergantung zona */
+questDo :-
+    initQuest(_),
+    zone(Z),
+    questDo(Z).
+
+questDo.
 questDo :-
     initQuest(_),
     zone(Z),

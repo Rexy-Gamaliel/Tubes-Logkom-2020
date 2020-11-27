@@ -7,11 +7,6 @@
 
 :- include('enemies.pl').
 
-/***  ToDos  ***/ 
-/** -   Atribut boss dan normal enemy di database dan di in-game (setelah bergantung level, dsb).
-    -   Penyesuaian hasil action terhadap atribut musuh dan player.
-    -   Tambah atribut GoldBounty dan XPBounty
-
 /*** Player di lokasi musuh berada ***/
 initFight :-
     init(_),
@@ -36,11 +31,6 @@ getEnemyID(X) :-
     X = ID, !.
 
 /*** Mendatangkan satu musuh dengan status level tertentu, dll. ***/
-/** 
-Notes:   
-    - Rentang level normal enemy adalah [MinLevel, Level2).
-    - Penyesuaian stats pemain dan normal enemy diperlukan. 
-**/
 enemyAppeared :- 
     inBattle(_),
     positionX(X),
@@ -65,10 +55,6 @@ enemyAppeared :-
     nl, write('Kamu bertemu '), write(EnemyName), write('. Bersiaplah!'), nl, nl,!.
 
 /*** Boss Triggered ***/
-/** 
-Notes:   
-    - Penyesuaian stats pemain dan boss pada database diperlukan. 
-**/
 bossTriggered :-
     inBattle(_),
     asserta(initBoss(1)),
@@ -149,9 +135,7 @@ curBattleStatus :-
 
 /*** Player melakukan basic attack terhadap musuh ***/
 /** 
-Notes:
     - Basic attack menghabiskan Stamina tertentu. 
-    - Stamina blm disesuaikan.
     - Health, Stamina, dan Mana berubah.
 **/
 playerAttack :-
@@ -160,7 +144,6 @@ playerAttack :-
 
 /*** Enemy melakukan basic attack terhadap player ***/
 /** 
-Notes:
     - Health, Stamina, dan Mana berubah.
 **/
 enemyAttack :-
@@ -286,16 +269,16 @@ enemyCounterAttack :-
                                     cooldownEnemy(CD),
                                     (CD =:= 0) ->   specialAttackEnemy,
                                                     addCooldownEnemy,
-                                                    sleep(1),
+                                                    sleep(1.5),
                                                     write(EnemyName), write(' menggunakan special attack-nya!'), nl, nl,
-                                                    sleep(1);
+                                                    sleep(1.5);
                                     enemyAttack,
                                     decreaseCooldownEnemy,
-                                    sleep(1),
+                                    sleep(1.5),
                                     write(EnemyName), write(' mengeluarkan basic attack.'), nl, nl,
-                                    sleep(1)
+                                    sleep(1.5)
                                 );
-        write('Yeay, serangan musuh meleset!'), nl, nl
+        sleep(1.5), write('Yeay, serangan musuh meleset!'), nl, sleep(1.5), nl
     ),
     decreaseCooldownPlayer,!.
     
@@ -355,9 +338,9 @@ attack :-
                                     curEnemyInfo(_,NormalEnemyName,_,_,_,NormalEnemyHealth,_,_,_),
                                     EnemyName = NormalEnemyName,
                                     EnemyHealth = NormalEnemyHealth
-                                ), nl, sleep(0.75), write(EnemyName), write(' terkena basic attack mu.'), sleep(0.75), nl, nl;
+                                ), sleep(1.5), nl, write(EnemyName), write(' terkena basic attack mu.'), nl, sleep(1.5), nl;
                                 
-        nl, sleep(0.75), write('Ah, seranganmu meleset!'), sleep(0.75), nl, nl,
+        sleep(1.5), nl, write('Ah, seranganmu meleset!'), nl, sleep(1.5), nl,
         (
             initBoss(_) ->  curBossInfo(_,_,_,_,BossHealth,_,_,_),
                             EnemyHealth = BossHealth;
@@ -407,9 +390,9 @@ specialAttack :-
                                                             curEnemyInfo(_,NormalEnemyName,_,_,_,NormalEnemyHealth,_,_,_),
                                                             EnemyName = NormalEnemyName,
                                                             EnemyHealth = NormalEnemyHealth
-                                                        ), nl, sleep(0.75), write(EnemyName), write(' terkena special attack-mu!'), sleep(0.75), nl, nl;
+                                                        ), sleep(1.5), nl, write(EnemyName), write(' terkena special attack-mu!'), nl, sleep(1.5), nl;
 
-                            nl, sleep(0.75), write('Ah, seranganmu meleset!'), sleep(0.75), nl, nl,
+                            sleep(1.5), nl, write('Ah, seranganmu meleset!'), nl, sleep(1.5), nl,
                             (
                                 initBoss(_) ->  curBossInfo(_,_,_,_,BossHealth,_,_,_),
                                                 EnemyHealth = BossHealth;
@@ -458,10 +441,10 @@ run :-
 
     random(1, 11, RunChance),
     (
-        (RunChance =\= 5) ->    nl, sleep(0.75), write('Kamu berhasil melarikan diri.'), sleep(0.75), nl, nl,
+        (RunChance =\= 5) ->    sleep(1.5), nl, write('Kamu berhasil melarikan diri.'), nl, sleep(1.5), nl,
                                 removeEnemy;
 
-        nl, sleep(0.75), write('Kamu gagal kabur dari '), write(EnemyName), write('!'), sleep(0.75), nl,
+        sleep(1.5), nl, write('Kamu gagal kabur dari '), write(EnemyName), write('!'), nl, sleep(1.5), nl,
         decreaseCooldownEnemy,
         enemyCounterAttack,
         playerStatus(Health,_,_,_,_,_,_,_,_,_,_),
@@ -505,13 +488,13 @@ usePotion :-
                                                 asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
                                                 updatePlayerStatus;
 
-        (IDPotion =:= 009, inBattle(_))     ->  write('Tidak dapat menggunakan Xp potion saat selama pertarungan.'), nl, nl,
+        (IDPotion =:= 009, inBattle(_))     ->  nl, write('Tidak dapat menggunakan Xp potion selama pertarungan.'), nl, nl,
                                                 commands                    
     ),  
 
     (
-        \+ inBattle(_) -> write("Health-mu telah bertambah."), nl;
-        write("Health-mu telah bertambah."), nl,
+        \+ inBattle(_) -> nl, write('Health-mu telah bertambah.'), nl;
+        sleep(1.5), nl, write('Health-mu telah bertambah.'), nl, sleep(1.5), nl,
         curBattleStatus,
         decreaseCooldownEnemy,
         enemyCounterAttack,
@@ -528,32 +511,55 @@ potionEffect(CurrentStatus, MaxStatus, NewStatus) :-
 
 queryPotion(ID) :-
     showPotions,
-    write('Pilih potion yang ingin dipakai: '), nl,
-    read(InputPotionName),
+    nl, write('Pilih potion yang ingin dipakai (masukkan nama potion yang sesuai): '), nl,
+    write('| '), read(InputPotionName),
     (
-        InputPotionName =:= healthPotion ->
-            (
-                \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion')
+        playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana,_,_,_,_,_),
+        InputPotionName == healthPotion ->  (
+            \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion.'), nl;
+            (Health =:= MaxHealth) -> (
+                nl, write('Health-mu sudah maksimal.'), nl;
+                nl
             );
-            (
-                InputPotionName =:= staminaPotion ->
-                    (
-                        \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion')
-                    );
-                    (
-                        InputInputPotionName =:= manaPotion ->
-                            (
-                                \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion')
-                            );
-                            (
-                                InputInputPotionName =:= xpPotion ->
-                                    (
-                                        \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion')
-                                    );
-                                    write('Tidak bisa menggunakan potion'), nl
-                            )
-                    )
-            )
+            inventory(ID, healthPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+            New is Amount - 1,
+            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+            asserta(inventory(ID, healthPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
+            nl
+        );
+        InputPotionName == staminaPotion -> (
+            \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion.'), nl;
+            (Stamina =:= MaxStamina) -> (
+                nl, write('Health-mu sudah maksimal.'), nl;
+                nl
+            );
+            inventory(ID, staminaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+            New is Amount - 1,
+            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+            asserta(inventory(ID, staminaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
+            nl
+        );
+        InputInputPotionName == manaPotion -> (
+            \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion.'), nl;
+            (Mana =:= MaxMana) -> (
+                nl, write('Health-mu sudah maksimal.'), nl;
+                nl
+            );
+            inventory(ID, manaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+            New is Amount - 1,
+            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+            asserta(inventory(ID, manaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
+            nl
+        );
+        InputInputPotionName == xpPotion -> (
+            \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion.'), nl;
+            inventory(ID, xpPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+            New is Amount - 1,
+            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+            asserta(inventory(ID, xpPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
+            nl
+        );
+        nl, write('Tidak bisa menggunakan potion.'), nl
     ),!.
 
 /*** Remove Triggered Enemy -Mati- ***/

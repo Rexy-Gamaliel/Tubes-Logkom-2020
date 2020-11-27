@@ -1,12 +1,13 @@
 todo :
--- habis bertarung exp belum nambah,    
+-- habis bertarung exp belum nambah (setelah mission selesai, blm dicoba).    
 -- update gold sesudah battle kyknya masih belum bener  [fixed]
--- generate lokasi enemy setelah battle belum bener. [fixed/?]
+-- generate lokasi enemy setelah battle belum bener. [fixed]
 -- looping waktu milih job msh belum bener  [fixed]
--- waktu battle darah player belum berkurang. [fixed/?]
--- showPotion blm muncul (inBatlle) 
+-- waktu battle darah player belum berkurang. [fixed]
+-- showPotions blm muncul [fixed]
 -- showItems error
 -- Abis usePotion di luar battle, terus ke musuh, error.
+-- load, save. [fixed]
 
 tested.
 tested by archer.

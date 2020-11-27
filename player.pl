@@ -199,7 +199,7 @@ showEquippedAccessory :-
     format('* ~w (equipped)', [Nama]), nl, !.
 
 showPotions :-
-    write('Your Potions: '), nl,
+    nl, write('Your Potions: '), nl,
     showHealthPotions,
     showStaminaPotions,
     showManaPotions.
@@ -285,23 +285,27 @@ showUnusableItemList :-
 showUnusableItemByJob(Job) :-
     \+ inventory(_, _, _, Job, _, _, _, _, _, _, _, _, _, _), !.
 showUnusableItemByJob(Job) :-
-    write('Job-mu tidak sesuai untuk menggunakan item ini: '), nl,
+    nl, write('Job-mu tidak sesuai untuk menggunakan item ini: '), nl,
     forall(inventory(Nama, _, _, Job, _, Amount, _, _, _, _, _, _, _, _),
         (
             format('> ~w (x ~d)', [Nama, Amount]), nl
         )
     ), nl.
+
 showUnusableItemByLevel(PlayerLevel) :-
-    write('Levelmu tidak cukup untuk menggunakan item ini: '), nl,
+    \+ (
+        inventory(_, _, _, _, ItemLevel, _, _, _, _, _, _, _, _, _),
+        ItemLevel > PlayerLevel
+    ), !.
+
+showUnusableItemByLevel(PlayerLevel) :-
+    nl, write('Levelmu tidak cukup untuk menggunakan item ini: '), nl,
     forall(inventory(Nama, _, _, _, ItemLevel, Amount, _, _, _, _, _, _, _, _),
         (
             ItemLevel > PlayerLevel ->
                 format('> ~w (x ~d)', [Nama, Amount]), nl
         )
     ).
-
-
-
 
 /*** Validasi ITEM ***/
 /*
@@ -375,20 +379,21 @@ addItem(ID) :-
 addItem(ID) :-
     inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     NewAmount is Amount + 1,
-    inventory(ID, Nama, Tipe, Job, Level, NewAmount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense).
+    retract(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    asserta(inventory(ID, Nama, Tipe, Job, Level, NewAmount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)).
 delItem(ID) :-
     \+(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)),
-    write('Tidak ada item di inventory'), nl, !.
+    nl, write('Tidak ada item di inventory'), nl, !.
 delItem(ID) :-
     inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
     Amount =:= 1,
     retract(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)),
-    write('You dropped an item!'), !.
+    nl, write('You dropped an item!'), nl, !.
 delItem(ID) :-
     inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
     NewAmount is Amount - 1,
     retract(inventory(ID, _, _, _, _, NewAmount, _, _, _, _, _, _, _, _)),
-    write('You dropped an item!'), !.
+    nl, write('You dropped an item!'), nl, !.
 
 
   /* Show Items Status */
