@@ -139,9 +139,9 @@ initItem :-
     assertz(inventory(001, Nama, Tipe, Job, Level, 5, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)).
 
 printItemList([], []).
-printItemList([H|T], [H2|T2]) :-
-    format('> ~w (x ~d)', [H, H2]), nl,
-    printItemList(T, T2).
+printItemList([HName|TName], [HAmount|TAmount]) :-
+    format('> ~w (x ~d)', [HName, HAmount]), nl,
+    printItemList(TName, TAmount).
 
 showUsableItemList :-
     showWeapons,
@@ -293,14 +293,15 @@ showUnusableItemByJob(Job) :-
     ), nl.
 
 showUnusableItemByLevel(PlayerLevel) :-
-    \+ (
-        inventory(_, _, _, _, ItemLevel, _, _, _, _, _, _, _, _, _),
-        ItemLevel > PlayerLevel
-    ), !.
-
+    forall(inventory(_, _, _, _, ItemLevel, _, _, _, _, _, _, _, _, _),
+        (
+            PlayerLevel > ItemLevel
+        )
+    ),
+    !.
 showUnusableItemByLevel(PlayerLevel) :-
-    nl, write('Levelmu tidak cukup untuk menggunakan item ini: '), nl,
-    forall(inventory(Nama, _, _, _, ItemLevel, Amount, _, _, _, _, _, _, _, _),
+    write('Levelmu tidak cukup untuk menggunakan item ini: '), nl,
+    forall(inventory(_, Nama, _, _, ItemLevel, Amount, _, _, _, _, _, _, _, _),
         (
             ItemLevel > PlayerLevel ->
                 format('> ~w (x ~d)', [Nama, Amount]), nl
@@ -311,11 +312,11 @@ showUnusableItemByLevel(PlayerLevel) :-
 /*
     playerInfo(Username, Job, Xp, Level, playerStatus/11)
     playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)
-
+*/
 isItemEquipable(ID, Result) :-
     playerInfo(_, JobPlayer, _, LevelPlayer, _),
     inventory(ID, _, Tipe, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
-    JobPlayer =\= JobItem,
+    \+ JobPlayer = JobItem,
     LevelPlayer < LevelItem,
     Result = no, !.
 isItemEquipable(ID, Result) :-
@@ -325,7 +326,7 @@ isItemEquipable(ID, Result) :-
     Result = no, !.
 isItemEquipable(ID, yes).
 
-*/
+
 
 /* Use Item (ID) */
 useItem(ID) :-      /*untuk potion*/
@@ -335,8 +336,8 @@ useItem(ID) :-      /*cek prasyarat Item*/
     inventory(ID, _, _, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
     playerInfo(_, JobPlayer, _, LevelPlayer, _), !,
     LevelPlayer < LevelItem,
-    JobItem =\= JobPlayer,
-    write('Kamu tidak bisa menggunakan item ini'), !, fail.
+    \+ JobItem = JobPlayer,
+    write('Kamu tidak bisa menggunakan item ini'), !.
 useItem(ID) :-
     inventory(ID, _, Tipe, _, _, _, _, _, _, _, _, _, _, _),
     (
@@ -372,10 +373,23 @@ useAccessory(ID) :-
 
 
 /* Delete and Add Player Item */
+checkCapacity(Result) :-
+    findall(Amount, inventory(_, _, _, _, _, Amount, _, _, _, _, _, _, _, _), ListAmountAll),
+    countCurrentCapacity(ListAmountAll, CurrentCapacity),
+    (
+        CurrentCapacity > 6 -> Result = full;
+        Result = available
+    ).
+
+countCurrentCapacity([], 0).
+countCurrentCapacity([H|T], Result) :-
+    countCurrentCapacity(T, NextResult),
+    Result is NextResult + H.
+
 addItem(ID) :-
     item(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     \+(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-    asserta(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)), !.
+    asserta(inventory(ID, Nama, Tipe, Job, Level, 1, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)), !.
 addItem(ID) :-
     inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     NewAmount is Amount + 1,

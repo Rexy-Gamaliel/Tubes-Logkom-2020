@@ -8,6 +8,11 @@ shop :-
     write('2. Potion (100 gold) -- potion.'),nl,!.   
 
 gacha :-
+    checkCapacity(Result),
+    Result = full,
+    write('Inventory kamu penuh!'), !.
+
+gacha :-
     isShop(X,Y),
     isPlayer(X,Y),
     gold(M),
@@ -162,6 +167,10 @@ buyItem(Index) :-
     nl, write('You get masterRobe.'), nl, !.
 
 /* Potion */
+potion :- 
+    checkCapacity(Result),
+    Result = full,
+    write('Inventory kamu penuh!'), !.
 potion :- 
     isShop(X,Y),
     isPlayer(X,Y),
