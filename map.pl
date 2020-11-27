@@ -54,11 +54,12 @@ questY(4).
 
 /* lokasi dragon */
 isEnemy(14,14).
+isBoss(14,14).
 
 initPlayerPosition :-
     asserta(positionX(1)),
-    asserta(positionY(1)).
-    generateEnemy(1,7),  /* generate lokasi musuh 7 titik setiap zone */
+    asserta(positionY(1)),
+    generateEnemy(1,7), 
     generateEnemy(2,7),
     generateEnemy(3,7).
 
@@ -77,6 +78,10 @@ generateEnemy(Zone,N) :-
         Next is N - 1,
         generateEnemy(Zone,Next)
     ),!.
+
+generateEnemy :-
+    zone(Z),
+    generateEnemy(Z,1),!.
 
 zone(Zone) :-
     positionX(X),
@@ -150,6 +155,12 @@ printX(X,Y) :-
 printX(X,Y) :-
     isPlayer(X,Y),
     print('P'),
+    NewY is Y+1,
+    printX(X,NewY).
+
+printX(X,Y) :- 
+    isBoss(X,Y),
+    print('D'),
     NewY is Y+1,
     printX(X,NewY).
 

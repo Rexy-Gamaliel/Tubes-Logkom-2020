@@ -1,5 +1,5 @@
 /** Notes: 
-    Gambaran skala:
+    Gambaran skala: (?) ngasal wkwk
       Level 1: MaxHealth, MaxStamina, MaxMana = 100
       Level 6: Kira2 tambah 80%, tergantung Job
       Level 11: Udah tambah 140% dari stat awal, tergantung Job. Effect equipmentutk level 11 ke atas otomatis dobel(?)
