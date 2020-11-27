@@ -1,9 +1,6 @@
 :- dynamic(inventory/14).
-<<<<<<< HEAD
-=======
 :- dynamic(playerInfo/5).
 :- dynamic(playerStatus/11).
->>>>>>> f55da58cb2a6cde269595d55c21461259431ceb2
 
 :- include('items.pl').
 
@@ -129,7 +126,6 @@ updateBonusStats :-
 
 
 
-<<<<<<< HEAD
 /*** PLAYER STATUS ***/
 /*
     Base Stats:         
@@ -171,8 +167,6 @@ updateBaseStats :-
 
 
 
-=======
->>>>>>> f55da58cb2a6cde269595d55c21461259431ceb2
 /*** PLAYER INVENTORY ***/
 /* inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense). */
 showItem :-
@@ -224,11 +218,7 @@ showAccessories(ListAccessories) :-
     write('Your Accessories: '), nl,
     showEquippedAccessory,
     playerInfo(_, Job, _, _, _),
-<<<<<<< HEAD
     findall(Nama, inventory(_, Nama, accessory, Job, _, _, _, _, _, _, _, _, _, _), ListAccessories).
-=======
-    findall(Nama, inventory(_, Nama, accessory, Job, _, _, _, _, _, _, _, _, _, _), ListArmors).
->>>>>>> f55da58cb2a6cde269595d55c21461259431ceb2
     printItemList(ListAccessories).
 showEquippedAccessory :-
     equippedAccessory(ID),
@@ -328,12 +318,6 @@ useAccessory(ID) :-
 /* Delete and Add Player Item */
 addItem(ID) :-
     item(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-<<<<<<< HEAD
-    asserta(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)).
-delItem(ID) :-
-    inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _),
-    retract(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)).
-=======
     \+ inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     asserta(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)), !.
 addItem(ID) :-
@@ -351,7 +335,6 @@ delItem(ID) :-
     inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
     NewAmount is Amount - 1,
     retract(inventory(ID, _, _, _, _, NewAmount, _, _, _, _, _, _, _, _)), !.
->>>>>>> f55da58cb2a6cde269595d55c21461259431ceb2
 
 
   /* Show Items Status */
@@ -376,13 +359,10 @@ showItemMaxHealth(ID) :-
     format('    MaxHealth     : +~d', MaxHealth), !.
 showItemMaxStamina(ID) :-
     inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-<<<<<<< HEAD
-=======
     MaxStamina < 0,
     format('    MaxStamina    : ~d', MaxStamina), !.
 showItemMaxStamina(ID) :-
     inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
->>>>>>> f55da58cb2a6cde269595d55c21461259431ceb2
     MaxStamina =/= 0,
     format('    MaxStamina    : +~d', MaxStamina), !.
 showItemMaxMana(ID) :-
