@@ -14,22 +14,24 @@ initPlayer :-.
 status :-
     init(_),
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-    write('Your status: '),nl,
+    write('*** Your status: ***'),nl,
     format('> ~w (~w)', [Username, Job]), nl,
+    gold(X),
+    format('> Gold      : ~d', X). nl,
     RequiredXp(Level, LevelXp),
-    format('> Level: ~d (~d / ~d)', [Level, Xp, LevelXp]), nl, nl,
-    format('> Attack: ~d', Attack), nl,
-    format('> Defense: ~d', Defense), nl,
-    format('> Health: ~d / ~d (+~d per turn)', [Health, MaxHealth, HealthRegen]), nl,
-    format('> Stamina: ~d / ~d (+~d per turn)', [Stamina, MaxStamina, StaminaRegen]), nl,
-    format('> Mana: ~d / ~d (+~d per turn)', [Mana, MaxMana, ManaRegen]), nl,
+    format('> Level     : ~d (~d / ~d)', [Level, Xp, LevelXp]), nl, nl,
+    format('> Attack    : ~d', Attack), nl,
+    format('> Defense   : ~d', Defense), nl,
+    format('> Health    : ~d / ~d (+~d per turn)', [Health, MaxHealth, HealthRegen]), nl,
+    format('> Stamina   : ~d / ~d (+~d per turn)', [Stamina, MaxStamina, StaminaRegen]), nl,
+    format('> Mana      : ~d / ~d (+~d per turn)', [Mana, MaxMana, ManaRegen]), nl,
 
 /* LEVEL */
 /* Required Xp untuk naik dari level n ke level n+1:  15 + 5*n Xp
    */
 RequiredXp(Level, LevelXp) :-
     LevelXp is (15 + 5 * Level).
-updateLevel :-
+updateLevel :-      /* bisa dipake juga waktu minum potion */
     playerInfo(_, _, Xp, Level, _),
     RequiredXp(Level, LevelXp), !,
     Xp >= LevelXp,
@@ -38,6 +40,7 @@ updateLevel :-
     retract(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
     asserta(playerInfo(Username, Job, NewXp, NewLevel, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
     updateLevel, !.
+updateLevel.
 
 
 /*** PLAYER STATUS ***/
@@ -61,7 +64,8 @@ updateLevel :-
 */
 updatePlayerStatus :-
     updateBaseStats,
-    updateBonusStats.
+    updateBonusStats,
+    updateLevel.
 
 
 updateBaseStats :-
@@ -141,6 +145,10 @@ printItemList([H|T]) :-
     printItemList(T).
 
 showUsableItemList :-
+    showWeapons,
+    showArmors,
+    showAccessories,
+    showPotions.
 
 /* sub fungsi dari showUsableItemList */
     /* Weapons */
@@ -154,7 +162,7 @@ showWeapons(ListWeapons) :-     % show equipped
 showEquippedWeapon :-
     equippedWeapon(ID),
     inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _, _),
-    format('~w (equipped)', Nama), nl, !.
+    format('* ~w (equipped)', Nama), nl, !.
 showEquippedWeapon :-
     write('(No weapons equipped)'), nl.
 
@@ -168,7 +176,7 @@ showArmors(ListArmors) :-
 showEquippedArmor :-
     equippedArmor(ID),
     inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _, _),
-    format('~w (equipped)', Nama), nl, !.
+    format('* ~w (equipped)', Nama), nl, !.
 showEquippedArmor :-
     write('(No armors equipped)'), nl.
 
@@ -182,11 +190,38 @@ showAccessories(ListAccessories) :-
 showEquippedAccessory :-
     equippedAccessory(ID),
     inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _, _),
-    format('~w (equipped)', Nama), nl, !.
+    format('* ~w (equipped)', Nama), nl, !.
 showEquippedAccessory :-
     write('(No accessory equipped)'), nl.
 
+showPotions :-
+    write('Your Potions: '), nl,
+    showHealthPotions,
+    showStaminaPotions,
+    showManaPotions.
 
+noPotionsExist :-
+    \+ inventory(_, _, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+
+showHealthPotions :-
+    \+ inventory(_, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+showHealthPotions :-
+    inventory(_, healthPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
+    format('> healthPotion      :    ~d', Amount).
+
+showStaminaPotions :-
+    \+ inventory(_, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+showStaminaPotions :-
+    inventory(_, staminaPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
+    format('> staminaPotion     :    ~d', Amount).
+
+showManaPotions :-
+    \+ inventory(_, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+showManaPotions :-
+    inventory(_, manaPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
+    format('> manaPotions       :    ~d', Amount).
+
+/*
 showPotions :- 
     write('Your Potions: '), nl,
     findall(Nama, inventory(_, Nama, potion, _, _, _, _, _, _, _, _, _, _, _), ListPotions).
@@ -198,7 +233,7 @@ showPotions :-
     showStaminaPotions(NumHealthPotion),
     showManaPotions(NumHealthPotion),
     showXpPotions(NumXpPotion).
-
+*/
 /*
 showHealthPotions(0), !.
 showHealthPotions(NumHealthPotion) :-
@@ -214,13 +249,14 @@ showXpPotions(NumXpPotion) :-
     format('xpPotion (x~d)', NumXpPotion), nl.
 */
 
+/*
 countPotions(PotionName, [], 0).
 countPotions(PotionName, [H|T], Num) :-
     PotionName = H, !,
     count(PotionName, List, NumNext),
     Num is NumNext + 1.
 countPotions(PotionName, [H|T], Num) :-
-    countPotions(PotionName, T, Num)
+    countPotions(PotionName, T, Num) */
 
 
     /* unusable Items */

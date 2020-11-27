@@ -82,4 +82,4 @@ questDo(3) :-
 /* Quest tergantung zona */
 questDo :-
     zone(Z),
-    questDo(Z),!.
+    questDo(Z),!.h

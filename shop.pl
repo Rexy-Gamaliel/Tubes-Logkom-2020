@@ -1,13 +1,24 @@
-:- use_module(library(random)).
+:- dynamic(gold/1).
 
 shop :- 
     write('What do you want to buy?'),nl,
-    write('1. Gacha (1000 gold)'),nl,
-    write('2. Health Potion (100 gold)'),nl,   
+    write('1. Gacha (1000 gold) -- gacha.'),nl,
+    write('2. Health Potion (100 gold) -- potion.'),nl,!.   
 
-gatcha :-
+gacha :-
+    gold(M),
+    N is M-1000,
+    N >= 0,
+    retract(gold(M)),
+    asserta(gold(N)),
     random(1,19,index),
     buyItem(index).
+
+gacha :-
+    gold(M),
+    N is M-1000,
+    N < 0,
+    write('You do not have enough money'),!.
 
 /*WEAPONS */
     /*Weapons Swordsman*/
@@ -110,33 +121,38 @@ buyItem(index) :-
 
 /* Potion */
 potion :- 
-    random(1,5,index),
-    buyPotion(index).
+    gold(M),
+    N is M-100,
+    N >= 0,
+    retract(gold(M)),
+    asserta(gold(N)),
+    write('What do you want to buy?')
+    write('1. healthPotion'),nl,
+    write('2. staminaPotion'),nl,
+    write('3. manaPotion'),nl,
+    write('4. xpPotion'),!.
 
-buyPotion(index) :-
-    index = 1,
+potion :-
+    gold(M),
+    N is M-100,
+    N < 0,
+    write('You do not have enough money'),!.
+
+healthPotion :-
     addItem(001),
     write('You get healthPotion'),!.
 
-buyPotion(index) :-
-    index = 2,
+staminaPotion :-
     addItem(002),
     write('You get staminaPotion'),!.
 
-buyPotion(index) :-
-    index = 2,
-    addItem(002),
-    write('You get staminaPotion'),!.
-
-buyPotion(index) :-
-    index = 3,
+manaPotion :-
     addItem(003),
     write('You get manaPotion'),!.
 
-buyPotion(index) :-
-    index = 4,
+xpPotion :-
     addItem(009),
     write('You get xpPotion'),!.
  
 exitShop :-
-    write('Thanks for coming').
+    write('Thanks for coming'),!.

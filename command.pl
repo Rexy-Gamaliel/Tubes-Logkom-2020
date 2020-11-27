@@ -1,49 +1,12 @@
 /* MOVEMENT */
 
+/* MOVE D (KANAN) */
 /*jika dalam pertarungan, tidak boleh pindah*/
 d :- 
     init(_),
     inBattle(_),
-    print('Anda sedang bertemu musuh, tidak boleh bergerak'),nl,!.
+    print('Kamu sedang bertemu musuh, tidak boleh bergerak'),nl,!.
 
-/*Bergerak ke kanan, temu musuh*/
-d :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    NextY is (TempY+1),
-    isEnemy(TempX,NextY),
-    retract(positionY(_)),
-    asserta(positionY(NextY)),
-    map,
-    print('Anda bertemu musuh'),nl,
-    battle,!.
-
-/*Bergerak ke kanan, masuk shop*/
-d :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    NextY is (TempY+1),
-    isShop(TempX,NextY),
-    retract(positionY(_)),
-    asserta(positionY(NextY)),
-    map,
-    print('Anda berada di shop, command "shop" untuk mengakses shop'),!.
-
-/*Bergerak ke kanan*/
-d :-
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    NextY is (TempY+1),
-    \+isKanan(TempX,NextY),
-    \+isQuest(TempX,NextY),
-    \+isShop(TempX,NextY),
-    retract(positionY(_)),
-    asserta(positionY(NextY)),
-    map,!.
-    
 /*Bergerak ke kanan, tapi ada dinding*/
 d :- 
     init(_),
@@ -54,49 +17,32 @@ d :-
     map,nl,
     write('Ada dinding!'),!.
 
+/* Bergerak ke kanan */
+d :- 
+    init(_),
+    positionX(TempX),
+    positionY(TempY),
+    NextY is (TempY+1),
+    retract(positionY(_)),
+    asserta(positionY(NextY)),
+    map,nl,
+    (
+        isShop(TempX,NextY) -> 
+        print('Kamu berada di shop, command "shop" untuk mengakses shop'),nl;
+        isQuest(TempX,NextY) ->
+        print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
+        isEnemy(TempX,NextY) ->
+        initFight;
+        nl
+    ),!.
+    
+
+/* MOVE A. (KIRI) */
 /*jika dalam pertarungan, tidak boleh pindah*/
 a :- 
     init(_),
     inBattle(_),
-    print('Anda sedang bertemu musuh, tidak boleh bergerak'),nl,!.
-
-/*Bergerak ke kiri, temu musuh*/
-a :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    NextY is (TempY-1),
-    isEnemy(TempX,NextY),
-    retract(positionY(_)),
-    asserta(positionY(NextY)),
-    map,
-    print('Anda bertemu musuh'),nl,
-    battle,!.
-
-/*Bergerak ke kiri, masuk shop*/
-a :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    NextY is (TempY-1),
-    isShop(TempX,NextY),
-    retract(positionY(_)),
-    asserta(positionY(NextY)),
-    map,
-    print('Anda berada di shop, command "shop" untuk mengakses shop'),!.
-
-/*Bergerak ke kiri*/
-a :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    NextY is (TempY-1),
-    \+isKiri(TempX,NextY),
-    \+isQuest(TempX,NextY),
-    \+isShop(TempX,NextY),
-    retract(positionY(_)),
-    asserta(positionY(NextY)),
-    map,!.
+    print('Kamu sedang bertemu musuh, tidak boleh bergerak'),nl,!.
 
 /*Bergerak ke kiri, tapi ada dinding*/
 a :- 
@@ -108,50 +54,33 @@ a :-
     write('Ada dinding!'),
     map,!.
 
+/*Bergerak ke kiri*/
+a :- 
+    init(_),
+    positionX(TempX),
+    positionY(TempY),
+    NextY is (TempY-1),
+    retract(positionY(_)),
+    asserta(positionY(NextY)),
+    map,nl,
+    (
+        isShop(TempX,NextY) -> 
+        print('Kamu berada di shop, command "shop" untuk mengakses shop'),nl;
+        isQuest(TempX,NextY) ->
+        print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
+        isEnemy(TempX,NextY) ->
+        initFight;
+        nl
+    ),!.
+
+
+/* MOVE S (BAWAH) */
 /*jika dalam pertarungan, tidak boleh pindah*/
 s :- 
     init(_),
     inBattle(_),
-    print('Anda sedang bertemu musuh, tidak boleh bergerak'),nl,!.
+    print('Kamu sedang bertemu musuh, tidak boleh bergerak'),nl,!.
 
-/*Bergerak ke bawah, temu musuh*/
-s :- 
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (TempX+1),
-    isEnemy(Next,Temp),
-    retract(positionX(_)),
-    asserta(positionX(Next)),
-    map,
-    print('Anda bertemu musuh'),nl,
-    battle,!.
-
-/*Bergerak ke bawah, masuk shop*/
-s :- 
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (TempX+1),
-    isShop(Next,Temp),
-    retract(positionX(_)),
-    asserta(positionX(Next)),
-    map,
-    print('Anda berada di shop, command "shop" untuk mengakses shop'),!.
-
-/*Bergerak ke bawah*/
-s :-    
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (TempX+1),
-    \+isBawah(Next,Temp),
-    \+isQuest(Next,Temp),
-    \+isShop(Next,Temp),
-    retract(positionX(_)),
-    asserta(positionX(Next)),
-    map,!.
-    
 /*Bergerak ke bawah, tapi ada dinding*/
 s :- 
     init(_),
@@ -162,49 +91,30 @@ s :-
     write('Ada dinding!'),
     map,!.
 
+/*Bergerak ke bawah*/
+s :- 
+    init(_),
+    positionX(TempX),
+    positionY(Temp),
+    Next is (TempX+1),
+    retract(positionX(_)),
+    asserta(positionX(Next)),
+    map,nl,
+    (
+        isShop(Next,Temp) -> 
+        print('Kamu berada di shop, command "shop" untuk mengakses shop'),nl;
+        isQuest(Next,Temp) ->
+        print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
+        isEnemy(Next,Temp) ->
+        initFight;
+        nl
+    ),!.
+
 /*jika dalam pertarungan, tidak boleh pindah*/
 w :- 
     init(_),
     inBattle(_),
-    print('Anda sedang bertemu musuh, tidak boleh bergerak'),nl,!.
-
-/*Bergerak ke atas, temu musuh*/
-w :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    Next is (TempX-1),
-    isEnemy(Next,TempY),
-    retract(positionX(_)),
-    asserta(positionX(Next)),
-    map,
-    print('Anda bertemu musuh'),nl,
-    battle,!.
-
-/*Bergerak ke atas, masuk shop*/
-w :- 
-    init(_),
-    positionX(TempX),
-    positionY(TempY),
-    Next is (TempX-1),
-    isShop(Next,TempY),
-    retract(positionX(_)),
-    asserta(positionX(Next)),
-    map,
-    print('Anda berada di shop, command "shop" untuk mengakses shop'),!.
-
-/*Bergerak ke atas*/
-w :-
-    init(_),
-    positionX(TempX),
-    positionY(Temp),
-    Next is (TempX-1),
-    \+isAtas(Next,Temp),
-    \+isQuest(Next,Temp),
-    \+isShop(Next,Temp),
-    retract(positionX(_)),
-    asserta(positionX(Next)),
-    map,!.
+    print('Kamu sedang bertemu musuh, tidak boleh bergerak'),nl,!.
 
 /*Bergerak ke atas, tapi ada dinding*/
 w :- 
@@ -215,6 +125,25 @@ w :-
     isAtas(NextX, TempY),
     write('Ada dinding!'),
     map,!.
+
+/*Bergerak ke atas*/
+w :- 
+    init(_),
+    positionX(TempX),
+    positionY(TempY),
+    Next is (TempX-1),
+    retract(positionX(_)),
+    asserta(positionX(Next)),
+    map,
+    (
+        isShop(Next,TempY) -> 
+        print('Kamu berada di shop, command "shop" untuk mengakses shop'),nl;
+        isQuest(Next,TempY) ->
+        print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
+        isEnemy(Next,TempY) ->
+        initFight;
+        nl
+    ),!.
 
 /* command teleport */
 /* rencananya biar si player gk op, kita bikin aja si teleport ini
@@ -233,8 +162,10 @@ teleport(X,Y) :-
     map,
     (
         isShop(X,Y) ->
-        print('Anda berada di shop, command "shop" untuk mengakses shop');
+        print('Kamu berada di shop, command "shop" untuk mengakses shop');
+        isQuest(X,Y) ->
+        print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
         isEnemy(X,Y) ->
-        print('Anda bertemu musuh'),nl,
-        battle
+        print('Kamu bertemu musuh'),nl,
+        initFight
     ),!.

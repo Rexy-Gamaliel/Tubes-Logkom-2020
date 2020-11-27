@@ -67,19 +67,22 @@ initJob(Username, Job) :-
         % Swordsman starter 
         Job =:= 1 ->
             asserta(playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4)),
-            playerInfo(Username, swordsman, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _))
+            playerInfo(Username, swordsman, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _)),
+            asserta(gold(5000))
         ;
         (
             % Archer starter
             Job =:= 2 ->
                 asserta(playerStatus(90, 100, 50, 90, 100, 50, 4, 3, 1, 14, 2)),
-                playerInfo(Username, archer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _))
+                playerInfo(Username, archer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _)),
+                asserta(gold(6000))
             ;
             (
                 % Sorcerer starter
                 Job =:= 3 ->
                     asserta(playerStatus(100, 50, 100, 100, 50, 100, 3, 1, 4, 14, 2)),
-                    playerInfo(Username, sorcerer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _))
+                    playerInfo(Username, sorcerer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _)),
+                    asserta(gold(7000))
             )
         )
     ).

@@ -3,12 +3,14 @@
 :- dynamic(playerInfo/5).       /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
 :- dynamic(playerStatus/11).    /* playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
 :- dynamic(inBattle/1).
+:- dynamic(initBoss/1).
 :- dynamic(cooldownPlayer/1).
 :- dynamic(cooldownEnemy/1).
 
 /*:- dynamic(init/1).*/
 
 :- include('enemies.pl').
+:- include('player.pl').
 
 /*
 :- include('map.pl').
@@ -97,6 +99,7 @@ Notes:
 **/
 bossAppeared :-
     inBattle(_),
+    asserta(initBoss(1))),
     playerInfo(Username,_,_,_,_),
     bossInfo(BossName, BossType, BossLevel, BossMaxHealth, BossHealthRegen, BossBasicAttack, BossSpecialAttack),
     BossHealth is BossMaxHealth,
@@ -120,8 +123,21 @@ commands :-
 /*** Menampilkan status player dan musuh saat ini ***/
 curBattleStatus :-
     inBattle(_),
-    curEnemyInfo(_,EnemyName, EnemyType, EnemyLevel,_,EnemyHealth,_,_,_),
     playerStatus(Health, Stamina, Mana,_,_,_,_,_,_, Attack, Defense),
+    (
+        initBoss(_) ->  curBossInfo(BossName, BossType, BossLevel, BossMaxHealth, BossHealth, BossHealthRegen, BossBasicAttack, BossSpecialAttack),
+                        EnemyName is BossName,
+                        EnemyHealth is BossHealth,
+                        EnemyLevel is BossLevel,
+                        EnemyType is BossType;
+
+        curEnemyInfo(_,NormalEnemyName, NormalEnemyType, NormalEnemyLevel,_,NormalEnemyHealth,_,_,_),
+        EnemyName is NormalEnemyName,
+        EnemyHealth is NormalEnemyHealth,
+        EnemyLevel is NormalEnemyLevel,
+        EnemyType is NormalEnemyType
+    ),
+
     write('*** Enemy status ***'), nl,
     write('~ Name: '), write(EnemyName), nl,
     write('~ Health: '), write(EnemyHealth), nl,
@@ -134,8 +150,9 @@ curBattleStatus :-
     write('~ Attack: '), write(Attack), nl,
     write('~ Defense: '), write(Defense), nl,
     (
-        (EnemyHealth =:= 0, Health > 0) ->  nl, write('Kamu berhasil kalahkan '), write(EnemyName), write('!'), nl,
-                                            removeEnemy;
+        (EnemyHealth =:= 0, Health > 0, initBoss(_)) ->     nl, write('Kamu berhasil kalahkan '), write(EnemyName), write('!'), nl,
+                                                            removeEnemy,
+                                                            ;
 
         (Health =:= 0) ->   playerInfo(Username,_,_,_,_), nl,
                             write('     ...........................................................    '), nl,
@@ -143,7 +160,7 @@ curBattleStatus :-
                             write('Sampai jumlah pada lain waktu.'), nl,    
                             removePlayerEnemy;
         nl       
-    ),!.
+    ),    
 
 /*** Player melakukan basic attack terhadap musuh ***/
 /** 
@@ -186,27 +203,27 @@ specialAttackEnemy :-
     validateBattleStatus(4),!.
 
 /*** Validasi apakah attack berupa playerAttack, enemyAttack, specialAttackPlayer, atau specialAttackEnemy ***/
-validateBattleStatus(X) :-
+validateBattleStatus(Mode) :-
     playerInfo(Username, Job, Xp, Level,_), 
     playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     curEnemyInfo(ID, EnemyName, EnemyType, EnemyLevel, EnemyMaxHealth, EnemyHealth, EnemyHealthRegen, EnemyBasicAttack, EnemySpecialAttack),
     (
-        (X =:= 1) ->    EnemyHealth2 is EnemyHealth - Attack + EnemyHealthRegen,
+        (Mode =:= 1) ->    EnemyHealth2 is EnemyHealth - Attack + EnemyHealthRegen,
                         PlayerHealth is Health + HealthRegen,
                         PlayerStamina is Stamina + StaminaRegen - 5,
                         PlayerMana is Mana + ManaRegen;
 
-        (X =:= 2) ->    PlayerHealth is Health + HealthRegen + Defense - EnemyBasicAttack,
+        (Mode =:= 2) ->    PlayerHealth is Health + HealthRegen + Defense - EnemyBasicAttack,
                         PlayerStamina is Stamina + StaminaRegen,
                         PlayerMana is Mana + ManaRegen,
                         EnemyHealth2 is EnemyHealth + EnemyHealthRegen; 
 
-        (X =:= 3) ->    EnemyHealth2 is EnemyHealth + EnemyHealthRegen - 1.5*Attack,
+        (Mode =:= 3) ->    EnemyHealth2 is EnemyHealth + EnemyHealthRegen - 1.5*Attack,
                         PlayerHealth is Health + HealthRegen,
                         PlayerStamina is Stamina + StaminaRegen - 5,
                         PlayerMana is Mana + ManaRegen - 8;
 
-        (X =:= 4) ->    PlayerHealth is Health + HealthRegen + Defense - EnemySpecialAttack,
+        (Mode =:= 4) ->    PlayerHealth is Health + HealthRegen + Defense - EnemySpecialAttack,
                         PlayerStamina is Stamina + StaminaRegen,
                         PlayerMana is Mana + ManaRegen,
                         EnemyHealth2 is EnemyHealth + EnemyHealthRegen
@@ -258,21 +275,21 @@ enemyCounterAttack :-
     ),
     decreaseCooldownPlayer,!.
     
-/*** Membuat Cooldown Player Menjadi 4 ***/
+/*** Membuat Cooldown Special Attack Player Menjadi 4 ***/
 addCooldownPlayer :-
     inBattle(_),
     New is 4,
     retract(cooldownPlayer(_)),
     asserta(cooldownPlayer(New)),!.
 
-/*** Membuat Cooldown Musuh Menjadi 4 ***/
+/*** Membuat Cooldown Special Attack Musuh Menjadi 4 ***/
 addCooldownEnemy :-
     inBattle(_),
     New is 4,
     retract(cooldownEnemy(_)),
     asserta(cooldownEnemy(New)),!.
 
-/*** Membuat Cooldown Player Berkurang 1 ***/
+/*** Membuat Cooldown Special Attack Player Berkurang 1 ***/
 decreaseCooldownPlayer :-
     inBattle(_),
     cooldownPlayer(Temp),
@@ -283,7 +300,7 @@ decreaseCooldownPlayer :-
     retract(cooldownPlayer(_)),
     asserta(cooldownPlayer(New)),!.
 
-/*** Membuat Cooldown Musuh berkurang 1 ***/
+/*** Membuat Cooldown Special Attack Musuh berkurang 1 ***/
 decreaseCooldownEnemy :-
     inBattle(_),
     cooldownEnemy(Temp),
@@ -320,10 +337,11 @@ attack :-
         commands
     ),!.
 
-/** Command dilakukan saat tidak dalam mode battle **/
 attack :-
     \+ inBattle(_),
     nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+    
+/** ----------------------------------------------------- **/
 
 /*** Player memilih special attack ***/
 /** 
@@ -357,10 +375,11 @@ specialAttack :-
         commands
     ),!.
 
-/** Command dilakukan saat tidak dalam mode battle **/
 specialAttack :-
     \+ inBattle(_),
     nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+
+/** ----------------------------------------------------- **/
 
 /*** Player Mencoba Kabur dari Musuh ***/
 /** 
@@ -382,19 +401,26 @@ run :-
         commands
     ),!.
 
-/** Command dilakukan saat tidak dalam mode battle **/
 run :-
     \+ inBattle(_),
     nl,write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+
+/** ----------------------------------------------------- **/
 
 /*** Use Potion ***/
 /** 
     Belum disesuaikan terhadap inventory pemain.    
 **/
+    /* oke gw tambahin, sub menu pilih Potion apa */
+    /* oke g
+    noPotionsExist,
+    write('Kamu tidak punya potion'), !.
+usePotion :-w tambahin, sub menu pilih Potion apa */
 usePotion :-
     inBattle(_),
     playerInfo(Username, Job, Xp, Level,_), 
     playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    queryPotion(IDPotion),
     /** Code goes here **/
     /* Temporary health */
     PlayerHealth is Health + 15,
@@ -406,35 +432,59 @@ usePotion :-
     retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
     asserta(playerStatus(Health1, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
     asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health1, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
-    curBattleStatus,
-    decreaseCooldownEnemy,
-    enemyCounterAttack,
-    curBattleStatus,
-    commands,!.
-
-/** Command dilakukan saat tidak dalam mode battle **/
-/* Ntah apa ini bisa dipake pas ga battle juga. */
-usePotion :-
-    \+ inBattle(_),
-    nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+    (
+        \+ inBattle(_) -> write("Health-mu telah beratambah."), nl;
+        write("Health-mu telah beratambah."), nl,
+        curBattleStatus,
+        decreaseCooldownEnemy,
+        enemyCounterAttack,
+        curBattleStatus,
+        commands
+    ),!.
     
-/*** Remove Normal Enemy -Mati- ***/
-removeEnemy :-
-    inBattle(_),
-    retract(curEnemyInfo(_,_,_,_,_,_,_,_,_)),
-    retract(cooldownEnemy(_)),
-    retract(cooldownPlayer(_)),
-    retract(inBattle(_)),!.
-    /**
-    positionX(X),
-    positionY(Y),
-    retract(isEnemy(X,Y)),
-    generateEnemy,
-    **/
+
+/** Command dilakukan saat tidak dalam mode battle
+    /* bisain aja dwi wkwkw */
+/* Ntah apa ini bisa dipake pas ga battle juga. */
+    /* bisain aja dwi wkwkw */
+usePotion :-
+
+
+potionEffect(CurrentStatus, MaxStatus) :-
+    PlayerHealth is Health + 15,
+    (
+        (PlayerHealth =< MaxHealth) -> PlayerHealth1 is MaxHealth;
+        PlayerHealth1 is PlayerHealth
+        /* Rex, tolong cek pc dah */
+    ),
+queryPotion(ID) :-
+    write('Pilih potion yang ingin dipakai: '),
+    showPotions,
+    read(InputPotionName),
+    (
+        InputPotionName =:= healthPotion ->
+            (
+                \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion');
+            );
+            (
+                InputPotionName =:= staminaPotion ->
+                    (
+                        \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion');
+                    );
+                    (
+                        InputInputPotionName =:= manaPotion ->
+                            (
+                                \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion');
+                            )
+                    )
+            )
+    ), !.
+
+
 
 /*** Remove Player -Mati- dan Enemy ***/
-removePlayerEnemy :-
-    inBattle(_),
     retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
     retract(playerInfo(_,_,_,_,_)),
     removeEnemy,!.
+    
+    /*** Remove Normal Enemy -Mati- ***/
