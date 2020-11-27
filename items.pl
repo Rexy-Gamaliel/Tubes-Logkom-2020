@@ -38,9 +38,9 @@ item(422, hunterArmor, armor, archer, 6, 20, 0, 0, 0, 0, 0, 0, 9).
 item(423, daedricArmor, armor, archer, 12, 30, 15, 0, 0, 0, 0, 0, 13).
 
   /* Sorcerer 4 3 _ */
-item(431, noviceRobe, armor, sorcerer, 1, 8, 0, MaxMana, 0, 0, 4, 0, 5).
-item(432, apprenticeRobe, armor, sorcerer, 5, 16, 0, MaxMana, 0, 0, 10, 0, 8).
-item(433, masterRobe, armor, sorcerer, 10, 24, 0, MaxMana, 0, 0, 16, 0, 11).
+item(431, noviceRobe, armor, sorcerer, 1, 8, 0, 10, 0, 0, 4, 0, 5).
+item(432, apprenticeRobe, armor, sorcerer, 5, 16, 0, 23, 0, 0, 10, 0, 8).
+item(433, masterRobe, armor, sorcerer, 10, 24, 0, 35, 0, 0, 16, 0, 11).
 
 
 /* Accessory 3 _ _ */

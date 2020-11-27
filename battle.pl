@@ -279,17 +279,21 @@ enemyCounterAttack :-
         curEnemyInfo(_,NormalEnemyName,_,_,_,_,_,_,_),
         EnemyName = NormalEnemyName
     ),
-    write('::::: '), write(EnemyName), write(' turn :::::'), nl,
+    write('::::: '), write(EnemyName), write(' turn :::::'), nl, nl,
     random(1, 11, EnemyChance),
     (
         (EnemyChance =\= 5) ->  (   
                                     cooldownEnemy(CD),
                                     (CD =:= 0) ->   specialAttackEnemy,
                                                     addCooldownEnemy,
-                                                    write(EnemyName), write(' menggunakan special attack-nya!'), nl, nl;
+                                                    sleep(1),
+                                                    write(EnemyName), write(' menggunakan special attack-nya!'), nl, nl,
+                                                    sleep(1);
                                     enemyAttack,
                                     decreaseCooldownEnemy,
-                                    write(EnemyName), write(' mengeluarkan basic attack.'), nl, nl
+                                    sleep(1),
+                                    write(EnemyName), write(' mengeluarkan basic attack.'), nl, nl,
+                                    sleep(1)
                                 );
         write('Yeay, serangan musuh meleset!'), nl, nl
     ),
@@ -351,9 +355,9 @@ attack :-
                                     curEnemyInfo(_,NormalEnemyName,_,_,_,NormalEnemyHealth,_,_,_),
                                     EnemyName = NormalEnemyName,
                                     EnemyHealth = NormalEnemyHealth
-                                ), nl, write(EnemyName), write(' terkena basic attack mu.'), nl, nl;
+                                ), nl, sleep(0.75), write(EnemyName), write(' terkena basic attack mu.'), sleep(0.75), nl, nl;
                                 
-        nl, write('Ah, seranganmu meleset!'), nl, nl,
+        nl, sleep(0.75), write('Ah, seranganmu meleset!'), sleep(0.75), nl, nl,
         (
             initBoss(_) ->  curBossInfo(_,_,_,_,BossHealth,_,_,_),
                             EnemyHealth = BossHealth;
@@ -365,7 +369,6 @@ attack :-
     decreaseCooldownEnemy,
     (
         (EnemyHealth =:= 0) -> curBattleStatus;
-        write('Tes'), nl,
         curBattleStatus,
         enemyCounterAttack,
         playerStatus(Health,_,_,_,_,_,_,_,_,_,_),
@@ -378,7 +381,7 @@ attack :-
 
 attack :-
     \+ inBattle(_),
-    nl, write('attack: Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+    nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
     
 /** ----------------------------------------------------- **/
 
@@ -404,9 +407,9 @@ specialAttack :-
                                                             curEnemyInfo(_,NormalEnemyName,_,_,_,NormalEnemyHealth,_,_,_),
                                                             EnemyName = NormalEnemyName,
                                                             EnemyHealth = NormalEnemyHealth
-                                                        ), nl, write(EnemyName), write(' terkena special attack-mu!'), nl, nl;
+                                                        ), nl, sleep(0.75), write(EnemyName), write(' terkena special attack-mu!'), sleep(0.75), nl, nl;
 
-                            nl, write('Ah, seranganmu meleset!'), nl, nl,
+                            nl, sleep(0.75), write('Ah, seranganmu meleset!'), sleep(0.75), nl, nl,
                             (
                                 initBoss(_) ->  curBossInfo(_,_,_,_,BossHealth,_,_,_),
                                                 EnemyHealth = BossHealth;
@@ -455,10 +458,10 @@ run :-
 
     random(1, 11, RunChance),
     (
-        (RunChance =\= 5) ->    nl, write('Kamu berhasil melarikan diri.'), nl, nl,
+        (RunChance =\= 5) ->    nl, sleep(0.75), write('Kamu berhasil melarikan diri.'), sleep(0.75), nl, nl,
                                 removeEnemy;
 
-        nl, write('Kamu gagal kabur dari '), write(EnemyName), write('!'), nl,
+        nl, sleep(0.75), write('Kamu gagal kabur dari '), write(EnemyName), write('!'), sleep(0.75), nl,
         decreaseCooldownEnemy,
         enemyCounterAttack,
         playerStatus(Health,_,_,_,_,_,_,_,_,_,_),
@@ -508,7 +511,7 @@ usePotion :-
 
     (
         \+ inBattle(_) -> write("Health-mu telah bertambah."), nl;
-        write("Health-mu telah beratambah."), nl,
+        write("Health-mu telah bertambah."), nl,
         curBattleStatus,
         decreaseCooldownEnemy,
         enemyCounterAttack,
@@ -524,8 +527,8 @@ potionEffect(CurrentStatus, MaxStatus, NewStatus) :-
     ).
 
 queryPotion(ID) :-
-    write('Pilih potion yang ingin dipakai: '),
     showPotions,
+    write('Pilih potion yang ingin dipakai: '), nl,
     read(InputPotionName),
     (
         InputPotionName =:= healthPotion ->
