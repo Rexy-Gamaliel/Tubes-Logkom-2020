@@ -514,52 +514,35 @@ queryPotion(ID) :-
     nl, write('Pilih potion yang ingin dipakai (masukkan nama potion yang sesuai): '), nl,
     write('| '), read(InputPotionName),
     (
-        playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana,_,_,_,_,_),
         InputPotionName == healthPotion ->  (
             \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion.'), nl;
-            (Health =:= MaxHealth) -> (
-                nl, write('Health-mu sudah maksimal.'), nl;
-                nl
-            );
             inventory(ID, healthPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
             New is Amount - 1,
             retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, healthPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
-            nl
+            asserta(inventory(ID, healthPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
         );
         InputPotionName == staminaPotion -> (
             \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion.'), nl;
-            (Stamina =:= MaxStamina) -> (
-                nl, write('Health-mu sudah maksimal.'), nl;
-                nl
-            );
             inventory(ID, staminaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
             New is Amount - 1,
             retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, staminaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
-            nl
+            asserta(inventory(ID, staminaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
         );
         InputInputPotionName == manaPotion -> (
             \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion.'), nl;
-            (Mana =:= MaxMana) -> (
-                nl, write('Health-mu sudah maksimal.'), nl;
-                nl
-            );
             inventory(ID, manaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
             New is Amount - 1,
             retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, manaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
-            nl
+            asserta(inventory(ID, manaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
         );
         InputInputPotionName == xpPotion -> (
             \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion.'), nl;
             inventory(ID, xpPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
             New is Amount - 1,
             retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, xpPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense));
-            nl
+            asserta(inventory(ID, xpPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
         );
-        nl, write('Tidak bisa menggunakan potion.'), nl
+        nl, write('Tidak bisa menggunakan potion.'), write(ID), nl
     ),!.
 
 /*** Remove Triggered Enemy -Mati- ***/

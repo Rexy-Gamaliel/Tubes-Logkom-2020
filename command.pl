@@ -184,12 +184,10 @@ teleport(X,Y) :-
 showItem :-
     init(_),
     write('******************************'), nl,
-    write('         INVENTORY            '), nl, nl,
-    showUsableItemList, nl,
-    showUnusableItemList,nl,!.
-
-% equip(ItemName) :-  % item name dari input user
-    /* inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
+    write('         INVENTORY            '), nl,
+    wshowUsableItemList, nl,
+    write('------------------------------'), nl,
+    showUnusableItemList,nl, !.
 
 equip(ItemName) :-  % item name dari input user
     % Cek apakah ada di inventory
@@ -198,7 +196,8 @@ equip(ItemName) :-  % item name dari input user
 equip(ItemName) :-
     % Validasi item
     inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
-    useItem(ID).
+    useItem(ID),
+    updatePlayerStatus. 
 
 throwItem(ItemName) :-
     % Cek apakah ada di inventory
@@ -206,4 +205,22 @@ throwItem(ItemName) :-
     write('Kamu tidak punya item ini'), nl, !.
 throwItem(ItemName) :-
     inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
-    delItem(ID).
+    delItem(ID),
+    updatePlayerStatus.
+
+  /* Show Items Status */
+infoItem(NamaItem) :-
+    \+ inventory(_, NamaItem, _, _, _, _, _, _, _, _, _, _, _, _),
+    write('Kmamu tidak punya item ini'), nl, !.
+infoItem(NamaItem) :-
+    write('>>> Item Detail <<<'), nl,
+    \+ inventory(ID, NamaItem, _, _, _, _, _, _, _, _, _, _, _, _),
+    format('Nama Item       : ~w', [NamaItem]), nl,
+    showItemHealthRegen(ID),
+    showItemStaminaRegen(ID),
+    showItemHealthRegen(ID),
+    showItemMaxHealth(ID),
+    showItemMaxStamina(ID),
+    showItemMaxMana(ID),
+    showItemAttack(ID),
+    showItemDefense(ID).
