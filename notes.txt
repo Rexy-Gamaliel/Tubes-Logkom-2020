@@ -1,0 +1,8 @@
+todo :
+-- habis bertarung exp belum nambah,
+-- update gold sesudah battle kyknya masih belum bener
+-- generate lokasi enemy setelah battle belum bener.
+-- looping waktu milih job msh belum bener
+-- waktu battle darah player belum berkurang.
+
+tested by archer.

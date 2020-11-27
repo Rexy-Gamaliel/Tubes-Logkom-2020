@@ -79,6 +79,10 @@ generateEnemy(Zone,N) :-
         generateEnemy(Zone,Next)
     ),!.
 
+generateEnemy :-
+    zone(Z),
+    generateEnemy(Z,1),!.
+
 zone(Zone) :-
     positionX(X),
     positionY(Y),

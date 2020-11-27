@@ -47,8 +47,11 @@ quest :-
 cekQuest :-
     mission(0,0,0,AccEXP),
     write('Quest berhasil. Kamu mendapat Exp sebesar '), print(AccEXP), nl,
-    naikExp(AccEXP), !.
-    
+    naikExp(AccEXP),
+    retract(initQuest(_)),
+    retract(mission(_,_,_,_)).
+
+cekQuest :- !.
 
 /* Quest buat slime */
 questDo(1) :-
@@ -82,5 +85,9 @@ questDo(3) :-
 
 /* Quest tergantung zona */
 questDo :-
+    initQuest(_),
     zone(Z),
     questDo(Z),!.
+
+questDo :-
+    \+ initQuest(_).

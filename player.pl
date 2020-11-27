@@ -170,7 +170,7 @@ showArmors(ListArmors) :-
     write('Your Armors: '), nl,
     showEquippedArmor,
     playerInfo(_, Job, _, _, _),
-    findall(Nama, inventory(_, Nama, armor, Job, _, _, _, _, _, _, _, _, _, _), ListArmors).
+    findall(Nama, inventory(_, Nama, armor, Job, _, _, _, _, _, _, _, _, _, _), ListArmors),
     findall(Amount, inventory(_, _, armor, Job, _, Amount, _, _, _, _, _, _, _, _), ListAmount),
     printItemList(ListArmors, ListAmount).
 showEquippedArmor :-

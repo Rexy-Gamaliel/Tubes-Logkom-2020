@@ -142,7 +142,7 @@ w :-
         print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
         isEnemy(Next,TempY) ->
         initFight;
-        nl
+        print('')
     ),!.
 
 /* command teleport */
@@ -167,7 +167,8 @@ teleport(X,Y) :-
         print('Kamu berada di lokasi quest, command "quest" untuk menerima atau melihat quest'),nl;
         isEnemy(X,Y) ->
         print('Kamu bertemu musuh'),nl,
-        initFight
+        initFight;
+        print('')
     ),!.
 
 showItem :-
