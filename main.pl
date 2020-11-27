@@ -110,6 +110,7 @@ quit :-
     retract(init(_)),
     retract(positionX(_)),
     retract(positionY(_)),
+    retract(gold(_)),
     forall(playerStatus(_, _, _, _, _, _, _, _, _, _, _), (
       retract(playerStatus(_, _, _, _, _, _, _, _, _, _, _))
     )),

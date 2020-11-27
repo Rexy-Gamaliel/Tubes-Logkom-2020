@@ -27,13 +27,13 @@ getEnemyID(X) :-
     zone(Z),
     (
         Z =:= 1 ->
-        random(1,6,ID),
+        random(1,6,ID);
         Z =:= 2 ->
         random(11,16,ID);
         Z =:= 3 ->
         random(6,11,ID);
         Z =:= 0 ->
-        random(1,16,ID) 
+        random(1,16,ID)
     ),
     X = ID, !.
 
@@ -127,9 +127,13 @@ curBattleStatus :-
         (EnemyHealth =:= 0, Health > 0, initBoss(_)) ->     nl, write('Kamu berhasil kalahkan '), write(EnemyName), write('!'), nl, nl,
                                                             removeEnemy,
                                                             quit,
-                                                            write('Tamat.');
+                                                            write('Tamat.'), nl;
         
         (EnemyHealth =:= 0, Health > 0, \+ initBoss(_)) ->      nl, write('Kamu berhasil kalahkan '), write(EnemyName), write('!'), nl,
+                                                                random(200, 401, GoldGained),
+                                                                write('~ Gold Gained: '), write(GoldGained), write('.'), nl,
+                                                                retract(gold(_)),
+                                                                asserta(gold(GoldGained)),
                                                                 removeEnemy;
 
         (Health =:= 0) ->   playerInfo(Username,_,_,_,_), nl,
@@ -457,51 +461,36 @@ run :-
 
 /************************** ******************************/
 
-/*** Use Available Potions ***/
+/*** Use Available Potions ***/ 
 usePotion :-
     init(_),
     playerInfo(Username, Job, Xp, Level,_), 
     playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    retract(playerInfo(_,_,_,_,_)), 
+    retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
     queryPotion(IDPotion),
     (
-        IDPotion =:= 001 ->
-            potionEffect(Health, MaxHealth, NewHealth);
-            retract(playerInfo(_,_,_,_,_)), 
-            retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
-            asserta(playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-            asserta(playerInfo(Username, Job, Xp, Level, playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
-            (
-                IDPotion =:= 002 ->
-                    potionEffect(Stamina, MaxStamina, NewStamina),
-                    retract(playerInfo(_,_,_,_,_)), 
-                    retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
-                    asserta(playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                    asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
-                    (
-                        IDPotion =:= 003 ->
-                            potionEffect(Mana, MaxMana, NewMana),
-                            retract(playerInfo(_,_,_,_,_)), 
-                            retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
-                            asserta(playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                            asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)))
-                            (
-                                (IDPotion =:= 009, \+ inBattle(_)) ->
-                                    NewXp is Xp + 25,
-                                    retract(playerInfo(_,_,_,_,_)), 
-                                    retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
-                                    asserta(playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                                    asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
-                                    updatePlayerStatus;
-                                    (
-                                        (IDPotion =:= 009, inBattle(_)) ->
-                                            write('Tidak dapat menggunakan Xp potion saat selama pertarungan.'), nl, nl,
-                                            commands
-                                    )
-                                )
-                            )
-                    )
-            )
-    ),    
+        IDPotion =:= 001                    ->  potionEffect(Health, MaxHealth, NewHealth),
+                                                asserta(playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                asserta(playerInfo(Username, Job, Xp, Level, playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
+
+        IDPotion =:= 002                    ->  potionEffect(Stamina, MaxStamina, NewStamina),
+                                                asserta(playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
+
+        IDPotion =:= 003                    ->  potionEffect(Mana, MaxMana, NewMana);
+                                                asserta(playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
+                                                
+
+        (IDPotion =:= 009, \+ inBattle(_))  ->  NewXp is Xp + 25;
+                                                asserta(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+                                                updatePlayerStatus;
+
+        (IDPotion =:= 009, inBattle(_))     ->  write('Tidak dapat menggunakan Xp potion saat selama pertarungan.'), nl, nl,
+                                                commands                    
+    ),  
 
     (
         \+ inBattle(_) -> write("Health-mu telah bertambah."), nl;
@@ -527,25 +516,24 @@ queryPotion(ID) :-
     (
         InputPotionName =:= healthPotion ->
             (
-                \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion'), !, fail;
-            ),
+                \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion')
+            );
             (
                 InputPotionName =:= staminaPotion ->
                     (
-                        \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion');
+                        \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion')
                     );
                     (
                         InputInputPotionName =:= manaPotion ->
                             (
-                                \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion');
+                                \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion')
                             );
                             (
                                 InputInputPotionName =:= xpPotion ->
                                     (
-                                        \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion');
+                                        \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion')
                                     );
                                     write('Tidak bisa menggunakan potion'), nl
-
                             )
                     )
             )

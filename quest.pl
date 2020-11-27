@@ -23,7 +23,7 @@ naikExp(AddEXP) :-
 /* Questing */
 quest :-
     initQuest(_),
-    print('Anda sudah menerima sebuah quest.\n'),
+    print('Kamu sudah menerima sebuah quest.\n'),
     mission(Num1,Num2,Num3,_),
     print('Slime  : '), write(Num1),nl,
     print('Wolf   : '), write(Num2),nl,
@@ -42,7 +42,7 @@ quest :-
 
 quest :-
     init(_),
-    print('Anda tidak berada di lokasi quest!'),!.
+    print('Kamu tidak berada di lokasi quest!'),!.
 
 cekQuest :-
     mission(0,0,0,AccEXP),
