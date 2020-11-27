@@ -186,11 +186,26 @@ showItem :-
     write('******************************'), nl,
     write('         INVENTORY            '), nl, nl,
     showUsableItemList, nl,
+    write('-----------------'),nl,
     showUnusableItemList,nl,!.
     
-    /*
-equip(ItemName) :-  % item name dari input user
-    inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)
+
+% equip(ItemName) :-  % item name dari input user
+    /* inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
+
 equip(ItemName) :-  % item name dari input user
     % Cek apakah ada di inventory
-*/\+inventory(_, Nama, _, _, _, _, _, _, _, _, _, _, _, _).
+    \+inventory(_, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
+    write('Kamu tidak punya item ini'), nl, !.
+equip(ItemName) :-
+    % Validasi item
+    inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
+    useItem(ID).
+
+throwItem(ItemName) :-
+    % Cek apakah ada di inventory
+    \+inventory(_, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
+    write('Kamu tidak punya item ini'), nl, !.
+throwItem(ItemName) :-
+    inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
+    delItem(ID).

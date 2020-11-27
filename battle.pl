@@ -531,22 +531,22 @@ queryPotion(ID) :-
     write('Pilih potion yang ingin dipakai: '), nl,
     read(InputPotionName),
     (
-        InputPotionName =:= healthPotion ->
+        InputPotionName = healthPotion ->
             (
                 \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion')
             );
             (
-                InputPotionName =:= staminaPotion ->
+                InputPotionName = staminaPotion ->
                     (
                         \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion')
                     );
                     (
-                        InputInputPotionName =:= manaPotion ->
+                        InputInputPotionName = manaPotion ->
                             (
                                 \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion')
                             );
                             (
-                                InputInputPotionName =:= xpPotion ->
+                                InputInputPotionName = xpPotion ->
                                     (
                                         \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion')
                                     );

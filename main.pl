@@ -70,7 +70,7 @@ initJob(Username, Job) :-
         Job =:= 1 ->
             asserta(playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4)),
             asserta(playerInfo(Username, swordsman, 0, 1, playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4))),
-            asserta(gold(3000));
+            asserta(gold(30000));
 
         % Archer starter
         Job =:= 2 ->
