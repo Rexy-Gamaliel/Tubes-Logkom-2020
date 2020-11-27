@@ -13,7 +13,7 @@
 new :-
     write('                  '),nl,
     write('Good isekai game!!'),nl,
-    write('Lets play and be a programmer'),nl,
+    write('Lets play and be a programmer.'),nl, nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
     write('%                               ~Genshin Asik~                                 %'), nl,
     write('% 1. start       : untuk memulai petualanganmu                                 %'),nl,
@@ -28,26 +28,24 @@ new :-
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,nl.
 
 initFirst :-
-    write('Welcome to Genshin Asik, Adventurer.'), nl,
-    write('What is your name?'), nl,
-    read(Username), nl,
-    format('Welcome, ~a !', [Username]), nl, nl,
+    write('Welcome to Genshin Asik, Adventurer!'), nl, nl,
+    write('What is your name? (Gunakan single quote di antara nama. Contoh, \'Player\')'), nl, 
+    write('| '), read(Username), nl,
+    format('Welcome, ~a!', [Username]), nl, nl,
     repeat,
-    write('Choose your job (1, 2, 3):'), nl,
+    write('Choose your job (1, 2, or 3):'), nl,
     write('1. Swordsman'), nl,
     write('2. Archer'), nl,
     write('3. Sorcerer'), nl,
-    read(Job),
+    write('| '), read(Job), nl,
     asserta(player(Job)),
     (
-        Job =:= 1 -> write('You chose Swordsman, lets explore the world'), nl;
+        Job =:= 1 -> write('You chose Swordsman, lets explore the world!'), nl;
         (
-            Job =:= 2 -> write('You chose Archer, lets explore the world'), nl;
+            Job =:= 2 -> write('You chose Archer, lets explore the world!'), nl;
             (
-                Job =:= 3 -> write('You chose Sorcerer, lets explore the world'), nl;
-                (
-                  write('Masukkan angka yang valid'), nl
-                )
+                Job =:= 3 -> write('You chose Sorcerer, lets explore the world!'), nl;
+                    write('')
             )
         )
     ),
@@ -59,7 +57,7 @@ checkJob(Job) :-
     Job >= 1,
     Job =< 3, !.
 checkJob(_) :-
-    write('Pilih job yang valid!'), nl.
+    write('Masukkan angka yang valid.'), nl, nl,!.
 checkJob(_) :- !, fail.
 
 initJob(Username, Job) :-
@@ -94,6 +92,7 @@ start :-
     !.
     
 help :-
+    nl,
     write('Perintah Bantuan: '),nl,
     write('     start   --      untuk memulai petualanganmu'),nl,
     write('     map     --      menampilkan peta'),nl,
@@ -110,7 +109,6 @@ quit :-
     retract(init(_)),
     retract(positionX(_)),
     retract(positionY(_)),
-    retract(gold(_)),
     forall(playerStatus(_, _, _, _, _, _, _, _, _, _, _), (
       retract(playerStatus(_, _, _, _, _, _, _, _, _, _, _))
     )),

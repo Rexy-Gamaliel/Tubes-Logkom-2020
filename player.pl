@@ -11,7 +11,7 @@
 status :-
     init(_),
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-    write('*** Your status: ***'),nl,
+    nl, write('*** Your status ***'),nl,
     format('> ~w (~w)', [Username, Job]), nl,
     gold(X),
     format('> Gold      : ~d', [X]), nl,
