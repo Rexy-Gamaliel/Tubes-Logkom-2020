@@ -36,7 +36,7 @@ savePlayerStatus :-
 
 saveInventory :- 
     forall(inventory(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),(
-        write('inventory('), write(', '), write(ID), write(', ') write(Nama), write(', '), write(Tipe),
+        write('inventory('), write(', '), write(ID), write(', '), write(Nama), write(', '), write(Tipe),
         write(', '), write(Job), write(', '), write(Level), write(', '), write(MaxHealth),  write(', '),
         write(MaxStamina), write(', '), write(MaxMana), write(', '), write(HealthRegen), write(', '),
         write(StaminaRegen), write(', '), write(ManaRegen), write(', '), write(Attack), write(', '), 
@@ -63,7 +63,6 @@ saveQuest :-
     write(Num2), write(', '), 
     write(Num3), write(', '), 
     write(EXP), write(').'), nl, !.
-
 
 saveEnemyLoc :-
     forall(isEnemy(X,Y),(

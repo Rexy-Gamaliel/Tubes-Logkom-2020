@@ -9,7 +9,7 @@
 naikExp(AddEXP) :-
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
     GetEXP is Xp + AddEXP,
-    RequiredXp(Level, LevelXp),
+    requiredXp(Level, LevelXp),
     (
         GetEXP >= LevelXp ->
         NewEXP is GetEXP - LevelXp,
@@ -23,7 +23,7 @@ naikExp(AddEXP) :-
 /* Questing */
 quest :-
     initQuest(_),
-    print('Anda sudah menerima sebuah quest.'),
+    print('Anda sudah menerima sebuah quest.\n'),
     mission(Num1,Num2,Num3,_),
     print('Slime  : '), write(Num1),nl,
     print('Wolf   : '), write(Num2),nl,
@@ -34,10 +34,11 @@ quest :-
     positionY(PosY),
     isQuest(PosX,PosY),
     asserta(initQuest(1)),
-    random(5,10,Num1),
-    random(5,10,Num2),
-    random(5,10,Num3),
-    asserta(mission(Num1,Num2,Num3,0)),!.
+    random(0,11,Num1),
+    random(0,11,Num2),
+    random(0,11,Num3),
+    asserta(mission(Num1,Num2,Num3,0)),
+    quest,!.
 
 quest :-
     init(_),
@@ -82,4 +83,4 @@ questDo(3) :-
 /* Quest tergantung zona */
 questDo :-
     zone(Z),
-    questDo(Z),!.h
+    questDo(Z),!.

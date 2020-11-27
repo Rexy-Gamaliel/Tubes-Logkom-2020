@@ -58,8 +58,8 @@ isBoss(14,14).
 
 initPlayerPosition :-
     asserta(positionX(1)),
-    asserta(positionY(1)).
-    generateEnemy(1,7),  /* generate lokasi musuh 7 titik setiap zone */
+    asserta(positionY(1)),
+    generateEnemy(1,7), 
     generateEnemy(2,7),
     generateEnemy(3,7).
 

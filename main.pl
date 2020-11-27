@@ -16,21 +16,22 @@ new :-
     write('Lets play and be a programmer'),nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,
     write('%                               ~Genshin Asik~                                 %'), nl,
-    write('% 1. start : untuk memulai petualanganmu                                       %'),nl,
-    write('% 2. map : menampilkan peta                                                    %'),nl,
-    write('% 3. status : menampilkan kondisimu terkini                                    %'),nl,
-    write('% 4. w : gerak ke utara 1 langkah                                              %'),nl,
-    write('% 5. s : gerak ke selatan 1 langkah                                            %'),nl,
-    write('% 6. d : gerak ke ke timur 1 langkah                                           %'),nl,
-    write('% 7. a : gerak ke barat 1 langkah                                              %'),nl,
-    write('% 8. help : menampilkan segala bantuan                                         %'),nl,
+    write('% 1. start       : untuk memulai petualanganmu                                 %'),nl,
+    write('% 2. map         : menampilkan peta                                            %'),nl,
+    write('% 3. status      : menampilkan kondisimu terkini                               %'),nl,
+    write('% 4. showItem    : menampilkan isi inventory                                   %'),nl,
+    write('% 5. w           : gerak ke utara 1 langkah                                    %'),nl,
+    write('% 6. s           : gerak ke selatan 1 langkah                                  %'),nl,
+    write('% 7. d           : gerak ke ke timur 1 langkah                                 %'),nl,
+    write('% 8. a           : gerak ke barat 1 langkah                                    %'),nl,
+    write('% 9. help        : menampilkan segala bantuan                                  %'),nl,
     write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'),nl,nl.
 
 initFirst :-
     write('Welcome to Genshin Asik, Adventurer.'), nl,
     write('What is your name?'), nl,
     read(Username), nl,
-    format('Welcome, ~w !', Username), nl, nl,
+    format('Welcome, ~a !', [Username]), nl, nl,
     repeat,
     write('Choose your job (1, 2, 3):'), nl,
     write('1. Swordsman'), nl,
@@ -45,20 +46,21 @@ initFirst :-
             (
                 Job =:= 3 -> write('You chose Sorcerer, lets explore the world'), nl;
                 (
-                  write ('Masukkan angka yang valid'), nl;
+                  write('Masukkan angka yang valid'), nl
                 )
             )
         )
     ),
     checkJob(Job),
     initJob(Username, Job),
-    showStatus.
+    status.
 
 checkJob(Job) :-
     Job >= 1,
     Job =< 3, !.
 checkJob(_) :-
     write('Pilih job yang valid!'), nl.
+checkJob(_) :- !, fail.
 
 initJob(Username, Job) :-
     /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
@@ -67,24 +69,20 @@ initJob(Username, Job) :-
         % Swordsman starter 
         Job =:= 1 ->
             asserta(playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4)),
-            playerInfo(Username, swordsman, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _)),
-            asserta(gold(5000))
-        ;
-        (
-            % Archer starter
-            Job =:= 2 ->
-                asserta(playerStatus(90, 100, 50, 90, 100, 50, 4, 3, 1, 14, 2)),
-                playerInfo(Username, archer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _)),
-                asserta(gold(6000))
-            ;
-            (
-                % Sorcerer starter
-                Job =:= 3 ->
-                    asserta(playerStatus(100, 50, 100, 100, 50, 100, 3, 1, 4, 14, 2)),
-                    playerInfo(Username, sorcerer, 0, 1, playerStatus(_, _, _, _, _, _, _, _, _, _, _)),
-                    asserta(gold(7000))
-            )
-        )
+            asserta(playerInfo(Username, swordsman, 0, 1, playerStatus(100, 100, 50, 100, 100, 50, 3, 3, 1, 14, 4))),
+            asserta(gold(3000));
+
+        % Archer starter
+        Job =:= 2 ->
+            asserta(playerStatus(90, 100, 50, 90, 100, 50, 4, 3, 1, 14, 2)),
+            asserta(playerInfo(Username, archer, 0, 1, playerStatus(90, 100, 50, 90, 100, 50, 4, 3, 1, 14, 2))),
+            asserta(gold(3000));
+            
+        % Sorcerer starter
+        Job =:= 3 ->
+            asserta(playerStatus(100, 50, 100, 100, 50, 100, 3, 1, 4, 14, 2)),
+            asserta(playerInfo(Username, sorcerer, 0, 1, playerStatus(100, 50, 100, 100, 50, 100, 3, 1, 4, 14, 2))),
+            asserta(gold(3000))
     ).
 
 start :-
@@ -92,7 +90,7 @@ start :-
     new,
     asserta(init(1)),
     initFirst,
-    initPlayer,
+    initPlayerPosition,
     !.
     
 help :-
@@ -112,9 +110,9 @@ quit :-
     retract(init(_)),
     retract(positionX(_)),
     retract(positionY(_)),
-    forall(playerStatus(_, _, _, _, _, _, _, _, _, _, _)), (
+    forall(playerStatus(_, _, _, _, _, _, _, _, _, _, _), (
       retract(playerStatus(_, _, _, _, _, _, _, _, _, _, _))
-    ),
+    )),
     forall(playerInfo(_, _, _, _, playerStatus(_, _, _, _, _, _, _, _, _, _, _)), (
       retract(playerinfo(_, _, _, _, playerStatus(_, _, _, _, _, _, _, _, _, _, _)))
-    ).
+    )).

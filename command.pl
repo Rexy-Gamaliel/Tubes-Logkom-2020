@@ -169,3 +169,10 @@ teleport(X,Y) :-
         print('Kamu bertemu musuh'),nl,
         initFight
     ),!.
+
+showItem :-
+    init(_),
+    write('Your Items: '), nl,
+    showUsableItemList, nl,
+    write('..and some junks'), nl,
+    showUnusableItemList.
