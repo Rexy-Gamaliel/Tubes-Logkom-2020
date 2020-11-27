@@ -34,21 +34,21 @@ buyItem(Index) :-
     isPlayer(X,Y),
     Index = 1,
     addItem(811),
-    write('You get ironSword'),!.
+    nl, write('You get ironSword.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 2,
     addItem(812),
-    write('You get katana'),!.
+    nl, write('You get katana.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 3,
     addItem(813),
-    write('You get greatSword'),!.
+    nl, write('You get greatSword.'),nl, !.
 
     /*Weapons Archer*/
 buyItem(Index) :-
@@ -56,21 +56,21 @@ buyItem(Index) :-
     isPlayer(X,Y),
     Index = 4,
     addItem(821),
-    write('You get longBow'),!.
+    nl, write('You get longBow.'),nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 5,
     addItem(822),
-    write('You get crossBow'),!.
+    nl, write('You get crossBow.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 6,
     addItem(823),
-    write('You get deadricBow'),!.
+    nl, write('You get deadricBow.'), nl, !.
 
     /*Weapons Sorcerer*/
 buyItem(Index) :-
@@ -78,21 +78,21 @@ buyItem(Index) :-
     isPlayer(X,Y),
     Index = 7,
     addItem(831),
-    write('You get noviceStaff'),!.
+    nl, write('You get noviceStaff.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 8,
     addItem(832),
-    write('You get apprenticeStaff'),!.
+    nl, write('You get apprenticeStaff.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 9,
     addItem(833),
-    write('You get masterStaff'),!.
+    nl, write('You get masterStaff.'), nl, !.
 
 /*ARMORS*/
     /*Armors Swordsman*/
@@ -101,21 +101,21 @@ buyItem(Index) :-
     isPlayer(X,Y),
     Index = 10,
     addItem(411),
-    write('You get lightArmor'),!.
+    nl, write('You get lightArmor.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 11,
     addItem(412),
-    write('You get chainMailArmor'),!.
+    nl, write('You get chainMailArmor.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 12,
     addItem(413),
-    write('You get knightsArmor'),!.
+    nl, write('You get knightsArmor.'), nl, !.
 
     /*Armors Archer*/
 buyItem(Index) :-
@@ -123,21 +123,21 @@ buyItem(Index) :-
     isPlayer(X,Y),
     Index = 13,
     addItem(421),
-    write('You get leatherArmor'),!.
+    nl, write('You get leatherArmor.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 14,
     addItem(422),
-    write('You get hunterArmor'),!.
+    nl, write('You get hunterArmor.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 15,
     addItem(423),
-    write('You get daedricArmor'),!.
+    nl, write('You get daedricArmor.'), nl, !.
 
     /*Weapons Sorcerer*/
 buyItem(Index) :-
@@ -145,21 +145,21 @@ buyItem(Index) :-
     isPlayer(X,Y),
     Index = 16,
     addItem(431),
-    write('You get noviceRobe'),!.
+    nl, write('You get noviceRobe.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 17,
     addItem(432),
-    write('You get apprenticeRobe'),!.
+    nl, write('You get apprenticeRobe.'), nl, !.
 
 buyItem(Index) :-
     isShop(X,Y),
     isPlayer(X,Y),
     Index = 18,
     addItem(433),
-    write('You get masterRobe'),!.
+    nl, write('You get masterRobe.'), nl, !.
 
 /* Potion */
 potion :- 
@@ -170,7 +170,7 @@ potion :-
     N >= 0,
     retract(gold(M)),
     asserta(gold(N)),
-    write('What do you want to buy?'),
+    write('What do you want to buy?'), nl, 
     write('1. healthPotion -- healthPotion.'),nl,
     write('2. staminaPotion -- staminaPotion.'),nl,
     write('3. manaPotion -- manaPotion.'),nl,
@@ -182,35 +182,35 @@ potion :-
     gold(M),
     N is M-100,
     N < 0,
-    write('You do not have enough money'),!.
+    nl, write('You do not have enough money.'),nl, !.
 
 healthPotion :-
     isShop(X,Y),
     isPlayer(X,Y),
     addItem(001),
-    write('You get healthPotion'),!.
+    nl, write('You get healthPotion.'), nl, !.
 
 staminaPotion :-
     isShop(X,Y),
     isPlayer(X,Y),
     addItem(002),
-    write('You get staminaPotion'),!.
+    nl, write('You get staminaPotion.'), nl, !.
 
 manaPotion :-
     isShop(X,Y),
     isPlayer(X,Y),
     addItem(003),
-    write('You get manaPotion'),!.
+    nl, write('You get manaPotion.'), nl, !.
 
 xpPotion :-
     isShop(X,Y),
     isPlayer(X,Y),
     addItem(009),
-    write('You get xpPotion'),!.
+    nl, write('You get xpPotion.'), nl, !.
  
 exitShop :-
     isShop(X,Y),
     isPlayer(X,Y),
-    write('Thanks for coming'),!.
+    nl, write('Thanks for coming.'), nl, !.
 
                         

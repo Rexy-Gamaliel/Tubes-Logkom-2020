@@ -14,7 +14,7 @@
 status :-
     init(_),
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-    write('*** Your status: ***'),nl,
+    nl, write('*** Your status ***'),nl,
     format('> ~w (~w)', [Username, Job]), nl,
     gold(X),
     format('> Gold      : ~d', [X]), nl,
@@ -144,7 +144,7 @@ showItem :-
     write('         INVENTORY            '), nl, nl,
     showUsableItemList, nl,
     showUnusableItemList.
-
+*/
 
 printItemList([], []).
 printItemList([H|T], [H2|T2]) :-
@@ -213,22 +213,22 @@ showPotions :-
     showManaPotions.
 
 noPotionsExist :-
-    \+(inventory(_, _, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
+    \+ inventory(_, _, potion, _, _, _, _, _, _, _, _, _, _, _), !.
 
 showHealthPotions :-
-    \+(inventory(_, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
+    \+ inventory(_, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
 showHealthPotions :-
     inventory(_, healthPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
     format('> healthPotion      :    ~d', [Amount]).
 
 showStaminaPotions :-
-    \+(inventory(_, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
+    \+ inventory(_, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
 showStaminaPotions :-
     inventory(_, staminaPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
     format('> staminaPotion     :    ~d', [Amount]).
 
 showManaPotions :-
-    \+(inventory(_, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
+    \+ inventory(_, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
 showManaPotions :-
     inventory(_, manaPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
     format('> manaPotions       :    ~d', [Amount]).

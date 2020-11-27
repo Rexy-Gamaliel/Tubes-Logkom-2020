@@ -1,7 +1,5 @@
 :- dynamic(curEnemyInfo/9).     /* curEnemyInfo(ID, EnemyName, EnemyType, EnemyLevel, EnemyMaxHealth, EnemyHealth, EnemyHealthRegen, EnemyBasicAttack, EnemySpecialAttack) */
 :- dynamic(curBossInfo/8).      /* curBossInfo(BossName, BossType, BossLevel, BossMaxHealth, BossHealth, BossHealthRegen, BossBasicAttack, BossSpecialAttack), */
-:- dynamic(playerInfo/5).       /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */
-:- dynamic(playerStatus/11).    /* playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
 :- dynamic(inBattle/1).
 :- dynamic(initBoss/1).
 :- dynamic(cooldownPlayer/1).
@@ -125,15 +123,17 @@ curBattleStatus :-
     write('~ Defense: '), write(Defense), nl,
     (
         (EnemyHealth =:= 0, Health > 0, initBoss(_)) ->     nl, write('Kamu berhasil kalahkan '), write(EnemyName), write('!'), nl, nl,
+                                                            write('Tamat.'), nl,
                                                             removeEnemy,
-                                                            quit,
-                                                            write('Tamat.'), nl;
+                                                            quit;
         
         (EnemyHealth =:= 0, Health > 0, \+ initBoss(_)) ->      nl, write('Kamu berhasil kalahkan '), write(EnemyName), write('!'), nl,
+                                                                gold(CurGold),
                                                                 random(200, 401, GoldGained),
                                                                 write('~ Gold Gained: '), write(GoldGained), write('.'), nl,
+                                                                NewGold is GoldGained + CurGold,
                                                                 retract(gold(_)),
-                                                                asserta(gold(GoldGained)),
+                                                                asserta(gold(NewGold)),
                                                                 removeEnemy;
 
         (Health =:= 0) ->   playerInfo(Username,_,_,_,_), nl,
@@ -143,7 +143,8 @@ curBattleStatus :-
                             write('Perjuanganmu kali ini hanya sampai di sini, '), write(Username), write('.'), nl, nl,
                             write('Sampai jumlah pada lain waktu.'), nl,
                             removeEnemy,    
-                            quit
+                            quit;
+        nl
     ),!.
 
 /*** Player melakukan basic attack terhadap musuh ***/
@@ -364,15 +365,20 @@ attack :-
     decreaseCooldownEnemy,
     (
         (EnemyHealth =:= 0) -> curBattleStatus;
+        write('Tes'), nl,
         curBattleStatus,
         enemyCounterAttack,
-        curBattleStatus,
-        commands
+        playerStatus(Health,_,_,_,_,_,_,_,_,_,_),
+        (
+            (Health =\= 0) ->   curBattleStatus,
+                                commands;
+            curBattleStatus
+        )
     ),!.
 
 attack :-
     \+ inBattle(_),
-    nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+    nl, write('attack: Kamu sedang tidak bertarung dengan musuh.'), nl,!.
     
 /** ----------------------------------------------------- **/
 
@@ -410,13 +416,17 @@ specialAttack :-
                             )
                         ),  
                         (
-                            (EnemyHealth =:= 0) -> curBattleStatus;
-                            addCooldownPlayer,
-                            decreaseCooldownEnemy,
-                            curBattleStatus,
-                            enemyCounterAttack,
-                            curBattleStatus,
-                            commands
+                            (EnemyHealth =\= 0) ->  addCooldownPlayer,
+                                                    decreaseCooldownEnemy,
+                                                    curBattleStatus,
+                                                    enemyCounterAttack,
+                                                    playerStatus(Health,_,_,_,_,_,_,_,_,_,_),
+                                                    (
+                                                        (Health =\= 0) ->   curBattleStatus,
+                                                                            commands;
+                                                        curBattleStatus
+                                                    );
+                            curBattleStatus
                         );
         nl, write('Special attack-mu masih cooldown!'), nl, nl,
         commands
@@ -451,8 +461,12 @@ run :-
         nl, write('Kamu gagal kabur dari '), write(EnemyName), write('!'), nl,
         decreaseCooldownEnemy,
         enemyCounterAttack,
-        curBattleStatus,
-        commands
+        playerStatus(Health,_,_,_,_,_,_,_,_,_,_),
+        (
+            (Health =\= 0) ->   curBattleStatus,
+                                commands;
+            curBattleStatus
+        )
     ),!.
 
 run :-
