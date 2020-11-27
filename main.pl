@@ -91,18 +91,20 @@ start :-
     asserta(init(1)),
     initFirst,
     initPlayerPosition,
+    initItem,
     !.
     
 help :-
     write('Perintah Bantuan: '),nl,
-    write('     start   --      untuk memulai petualanganmu'),nl,
-    write('     map     --      menampilkan peta'),nl,
-    write('     status  --      menampilkan kondisimu terkini '),nl,
-    write('     w       --      gerak ke atas 1 langkah'),nl,
-    write('     a       --      gerak ke kiri 1 langkah'),nl,
-    write('     s       --      gerak ke bawah 1 langkah'),nl,
-    write('     d       --      gerak ke kanan 1 langkah'),nl,
-    write('     help    --      menampilkan segala bantuan'),nl. 
+    write('     start       --      untuk memulai petualanganmu'),nl,
+    write('     map         --      menampilkan peta'),nl,
+    write('     status      --      menampilkan kondisimu terkini '),nl,
+    write('     showItem    --      menampilkan isi inventory'),nl,
+    write('     w           --      gerak ke atas 1 langkah'),nl,
+    write('     a           --      gerak ke kiri 1 langkah'),nl,
+    write('     s           --      gerak ke bawah 1 langkah'),nl,
+    write('     d           --      gerak ke kanan 1 langkah'),nl,
+    write('     help        --      menampilkan segala bantuan'),nl. 
 
 quit :-
     /* playerInfo(Username, Job, Xp, Level, playerStatus/11) */

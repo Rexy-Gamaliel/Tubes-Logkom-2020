@@ -26,8 +26,8 @@ enemyInfo(9, 'Goblin D', goblin, 1, 75, 3, 10, 21).
 enemyInfo(10, 'Goblartar', goblin, 1, 80, 3, 10, 20).
 
 enemyInfo(11, 'Wolfran Alpha', wolf, 1, 80, 3, 15, 15).
-enemyInfo(12, 'Wolf B', wolf, 1, 85, 3, 14, 14).
-enemyInfo(13, 'Wolf C', wolf, 1, 90, 3, 13, 14).
+enemyInfo(12, 'Burwulf', wolf, 1, 85, 3, 14, 14).
+enemyInfo(13, 'Wolfare', wolf, 1, 90, 3, 13, 14).
 enemyInfo(14, 'Wolf D', wolf, 1, 95, 3, 12, 14).
 enemyInfo(15, 'Golf', wolf, 1, 100, 3, 12, 13).
 

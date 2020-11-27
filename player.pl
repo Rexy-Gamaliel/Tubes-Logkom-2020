@@ -1,6 +1,9 @@
 :- dynamic(inventory/14).
 :- dynamic(playerInfo/5).
 :- dynamic(playerStatus/11).
+:- dynamic(equippedWeapon/1).
+:- dynamic(equippedArmor/1).
+:- dynamic(equippedAccessory/1).
 
 /*:- include('items.pl').*/
 
@@ -127,57 +130,21 @@ updateBonusStats :-
 
 
 
-/*** PLAYER STATUS ***/
-/*
-    Base Stats:         
-        Stats = b + n * k       n = Level-1
-                        Swordsman   Archer      Sorcerer
-                        (n, k)      (n, k)      (n, k)
-        Health  :       (100, 12)   (90, 10)    (100,8)
-        HealthR :       (3, 1)      (4, 1)      (3, 1)
-        Stamina :       (100, 10)   (100,12)    (50, 8)
-        StaminaR:       (2, 1)      (3, 1)      (1, 1)
-        Mana    :       (50, 6)     (50,8)      (100, 12)
-        ManaR   :       (1, 0)      (1, 0)      (4, 1)
-        Attack  :       (14, 3)     (14, 3)     (12, 4)
-        Defense :       (4, 3)      (4, 2)      (2, 2)
-    Bonus Stats:    (effects from items and accesories)
-        (sesuai item)
-    Immediate Effect: (potions)
-    
-*/
-updatePlayerStatus :-
-
-
-
-updateBaseStats :-
-    playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-    N is Level -1,
-    (
-        Job =:= Swordsman ->
-            NewHealth is 100 + N * 12,
-            HealthRegen,
-            Stamina,
-            StaminaRegen,
-            Mana,
-            ManaRegen,
-            Att
-
-    )
-
-
-
-
 /*** PLAYER INVENTORY ***/
 /* inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense). */
-/*
+
+initItem :-
+    init(_),
+    item(001, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    assertz(inventory(001, Nama, Tipe, Job, Level, 5, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)).
+
 showItem :-
     init(_),
-    write('Your Items: '), nl,
+    write('******************************'), nl,
+    write('         INVENTORY            '), nl, nl,
     showUsableItemList, nl,
-    write('..and some junks'), nl,
     showUnusableItemList.
-*/
+
 
 printItemList([], []).
 printItemList([H|T], [H2|T2]) :-
@@ -192,49 +159,52 @@ showUsableItemList :-
 
 /* sub fungsi dari showUsableItemList */
     /* Weapons */
-showWeapons(ListWeapons) :-     % show equipped
+showWeapons :-     % show equipped
     write('Your Weapons: '), nl,
     showEquippedWeapon,
     playerInfo(_, Job, _, _, _),
     findall(Nama, inventory(_, Nama, weapon, Job, _, _, _, _, _, _, _, _, _, _), ListWeapons),
     findall(Amount, inventory(_, _, weapon, Job, _, Amount, _, _, _, _, _, _, _, _), ListAmount),
-    printItemList(ListWeapons, ListAmount).
+    printItemList(ListWeapons, ListAmount), nl.
+showEquippedWeapon :-
+    \+(equippedWeapon(_)), !,
+    write('     (No weapons equipped)'), nl, !.
 showEquippedWeapon :-
     equippedWeapon(ID),
     inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _, _),
     format('* ~w (equipped)', [Nama]), nl, !.
-showEquippedWeapon :-
-    write('(No weapons equipped)'), nl.
 
     /* Armors */
-showArmors(ListArmors) :-
+showArmors :-
     write('Your Armors: '), nl,
     showEquippedArmor,
     playerInfo(_, Job, _, _, _),
     findall(Nama, inventory(_, Nama, armor, Job, _, _, _, _, _, _, _, _, _, _), ListArmors),
     findall(Amount, inventory(_, _, armor, Job, _, Amount, _, _, _, _, _, _, _, _), ListAmount),
-    printItemList(ListArmors, ListAmount).
+    printItemList(ListArmors, ListAmount), nl.
+showEquippedArmor :-
+    \+(equippedArmor(_)),
+    write('     (No armors equipped)'), nl, !.
 showEquippedArmor :-
     equippedArmor(ID),
     inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _, _),
     format('* ~w (equipped)', [Nama]), nl, !.
-showEquippedArmor :-
-    write('(No armors equipped)'), nl.
 
     /* Accessories */
-showAccessories(ListAccessories) :-
+showAccessories :-
     write('Your Accessories: '), nl,
     showEquippedAccessory,
     playerInfo(_, Job, _, _, _),
     findall(Nama, inventory(_, Nama, accessory, Job, _, _, _, _, _, _, _, _, _, _), ListAccessories),
     findall(Amount, inventory(_, _, accessory, Job, _, Amount, _, _, _, _, _, _, _, _), ListAmount),
-    printItemList(ListAccessories, ListAmount).
+    printItemList(ListAccessories, ListAmount), nl.
+showEquippedAccessory :-
+    \+(equippedAccessory(_)),
+    write('     (No accessory equipped)'), nl, !.
 showEquippedAccessory :-
     equippedAccessory(ID),
     inventory(ID, Nama, _, _, _, _, _, _, _, _, _, _, _, _),
     format('* ~w (equipped)', [Nama]), nl, !.
-showEquippedAccessory :-
-    write('(No accessory equipped)'), nl.
 
 showPotions :-
     write('Your Potions: '), nl,
@@ -243,22 +213,22 @@ showPotions :-
     showManaPotions.
 
 noPotionsExist :-
-    \+ inventory(_, _, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+    \+(inventory(_, _, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
 
 showHealthPotions :-
-    \+ inventory(_, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+    \+(inventory(_, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
 showHealthPotions :-
     inventory(_, healthPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
     format('> healthPotion      :    ~d', [Amount]).
 
 showStaminaPotions :-
-    \+ inventory(_, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+    \+(inventory(_, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
 showStaminaPotions :-
     inventory(_, staminaPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
     format('> staminaPotion     :    ~d', [Amount]).
 
 showManaPotions :-
-    \+ inventory(_, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _), !.
+    \+(inventory(_, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _)), !.
 showManaPotions :-
     inventory(_, manaPotion, potion, _, _, Amount, _, _, _, _, _, _, _, _), 
     format('> manaPotions       :    ~d', [Amount]).
@@ -305,15 +275,14 @@ countPotions(PotionName, [H|T], Num) :-
 
 showUnusableItemList :-
     playerInfo(_, Job, _, PlayerLevel, _),
-    write('You dont have the appropriate Job to use these: '), nl,
     (
-        Job =:= swordsman ->
+        Job = swordsman ->
             showUnusableItemByJob(archer), showUnusableItembyJob(sorcerer);
         (
-            Job =:= archer ->
+            Job = archer ->
                 showUnusableItemByJob(swordsman), showUnusableItembyJob(sorcerer);
             (
-                Job =:= sorcerer ->
+                Job = sorcerer ->
                     showUnusableItembyJob(swordsman), showUnusableItemByJob(archer)
             )
         )
@@ -323,11 +292,14 @@ showUnusableItemList :-
 
 % inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)
 showUnusableItemByJob(Job) :-
+    \+ inventory(_, _, _, Job, _, _, _, _, _, _, _, _, _, _), !.
+showUnusableItemByJob(Job) :-
+    write('You dont have the appropriate Job to use these: '), nl,
     forall(inventory(Nama, _, _, Job, _, Amount, _, _, _, _, _, _, _, _),
         (
             format('> ~w (x ~d)', [Nama, Amount]), nl
         )
-    ).
+    ), nl.
 showUnusableItemByLevel(PlayerLevel) :-
     forall(inventory(Nama, _, _, _, ItemLevel, Amount, _, _, _, _, _, _, _, _),
         (
@@ -388,14 +360,14 @@ useAccessory(ID) :-
 /* Delete and Add Player Item */
 addItem(ID) :-
     item(ID, Nama, Tipe, Job, Level, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-    \+ inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    \+(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
     asserta(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)), !.
 addItem(ID) :-
     inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     NewAmount is Amount + 1,
     inventory(ID, Nama, Tipe, Job, Level, NewAmount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense).
 delItem(ID) :-
-    \+ inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _),
+    \+(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)),
     write('Tidak ada item di inventory'), nl, !.
 delItem(ID) :-
     inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
