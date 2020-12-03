@@ -487,25 +487,25 @@ usePotion :-
     retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
     queryPotion(IDPotion),
     (
-        IDPotion =:= 001                    ->  potionEffect(Health, MaxHealth, NewHealth),
+        IDPotion = 001                    ->  potionEffect(Health, MaxHealth, NewHealth),
                                                 asserta(playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
                                                 asserta(playerInfo(Username, Job, Xp, Level, playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
 
-        IDPotion =:= 002                    ->  potionEffect(Stamina, MaxStamina, NewStamina),
+        IDPotion = 002                    ->  potionEffect(Stamina, MaxStamina, NewStamina),
                                                 asserta(playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
                                                 asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
 
-        IDPotion =:= 003                    ->  potionEffect(Mana, MaxMana, NewMana);
+        IDPotion = 003                    ->  potionEffect(Mana, MaxMana, NewMana);
                                                 asserta(playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
                                                 asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
                                                 
 
-        (IDPotion =:= 009, \+ inBattle(_))  ->  NewXp is Xp + 25;
+        (IDPotion = 009, \+ inBattle(_))  ->  NewXp is Xp + 25;
                                                 asserta(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
                                                 asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
                                                 updatePlayerStatus;
 
-        (IDPotion =:= 009, inBattle(_))     ->  write('Tidak dapat menggunakan Xp potion saat selama pertarungan.'), nl, nl,
+        (IDPotion = 009, inBattle(_))     ->  write('Tidak dapat menggunakan Xp potion saat selama pertarungan.'), nl, nl,
                                                 commands                    
     ),  
 

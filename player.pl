@@ -72,7 +72,7 @@ updateBaseStats :-
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
     N is Level-1,
     (
-        Job =:= swordsman ->
+        Job = swordsman ->
             NewMaxHealth is 100 + N * 12,
             NewHealthRegen is 3 + N * 1,
             NewMaxStamina is 100 + N * 10,
@@ -82,7 +82,7 @@ updateBaseStats :-
             NewAttack is 14 + N * 3,
             NewDefense is 4 + N * 3;
         (
-            Job =:= archer ->
+            Job = archer ->
                 NewMaxHealth is 90 + N * 10,
                 NewHealthRegen is 4 + N * 1,
                 NewMaxStamina is 100 + N * 12,
@@ -92,7 +92,7 @@ updateBaseStats :-
                 NewAttack is 14 + N * 3,
                 NewDefense is 4 + N * 2;
             (
-                Job =:= sorcerer ->
+                Job = sorcerer ->
                     NewMaxHealth is 100 + N * 8,
                     NewHealthRegen is 3 + N * 1,
                     NewMaxStamina is 50 + N * 8,
@@ -282,6 +282,7 @@ showUnusableItemList :-
     showUnusableItemByLevel(PlayerLevel).
 
 % inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)
+/* inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
 showUnusableItemByJob(Job) :-
     \+ inventory(_, _, _, Job, _, _, _, _, _, _, _, _, _, _), !.
 showUnusableItemByJob(Job) :-
@@ -305,7 +306,7 @@ showUnusableItemByLevel(PlayerLevel) :-
             ItemLevel > PlayerLevel ->
                 format('> ~w (x ~d)', [Nama, Amount]), nl
         )
-    ).
+    ), !.
 
 
 
@@ -331,9 +332,6 @@ isItemEquipable(ID, yes).
 
 
 /* Use Item (ID) */
-useItem(ID) :-      /*untuk potion*/
-    inventory(ID, _, potion, _, _, _, _, _, _, _, _, _, _, _),
-    usePotion(ID).
 useItem(ID) :-      /*cek prasyarat Item*/
     inventory(ID, _, _, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
     playerInfo(_, JobPlayer, _, LevelPlayer, _), !,
@@ -343,34 +341,34 @@ useItem(ID) :-      /*cek prasyarat Item*/
 useItem(ID) :-
     inventory(ID, _, Tipe, _, _, _, _, _, _, _, _, _, _, _),
     (
-        Tipe =:= weapon -> useWeapon(ID);
+        Tipe = weapon -> useWeapon(ID);
         (
-            Tipe =:= armor -> useArmor(ID);
+            Tipe = armor -> useArmor(ID);
             (
-                Tipe =:= accessory -> useAccessory(ID)
+                Tipe = accessory -> useAccessory(ID)
             )
         )
     ).
     /* untuk use dibawah, Player dapat memakai itemnya (level dan job valid) */
 useWeapon(ID) :-       
-    equippedWeapon(_),
-    retract(equippedWeapon(_)),
+    \+ equippedWeapon(_),
     asserta(equippedWeapon(ID)), !.
 useWeapon(ID) :-       
+    retract(equippedWeapon(_)),
     asserta(equippedWeapon(ID)), !.
 
 useArmor(ID) :-       
-    equippedArmor(_),
-    retract(equippedArmor(_)),
+    \+ equippedArmor(_),
     asserta(equippedArmor(ID)), !.
 useArmor(ID) :-       
+    retract(equippedArmor(_)),
     asserta(equippedArmor(ID)), !.
 
 useAccessory(ID) :-       
-    equippedAccessory(_),
-    retract(equippedAccessory(_)),
+    \+ equippedAccessory(_),
     asserta(equippedAccessory(ID)), !.
 useAccessory(ID) :-       
+    retract(equippedAccessory(_)),
     asserta(equippedAccessory(ID)), !.
 
 

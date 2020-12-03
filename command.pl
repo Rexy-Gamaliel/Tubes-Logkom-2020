@@ -198,7 +198,6 @@ equip(ItemName) :-  % item name dari input user
     \+inventory(_, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
     write('Kamu tidak punya item ini'), nl, !.
 equip(ItemName) :-
-    % Validasi item
     inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
     useItem(ID).
 
@@ -209,3 +208,20 @@ throwItem(ItemName) :-
 throwItem(ItemName) :-
     inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
     delItem(ID).
+
+  /* Show Items Status */
+infoItem(NamaItem) :-
+    \+ inventory(_, NamaItem, _, _, _, _, _, _, _, _, _, _, _, _),
+    write('Kmamu tidak punya item ini'), nl, !.
+infoItem(NamaItem) :-
+    write('>>> Item Detail <<<'), nl,
+    inventory(ID, NamaItem, _, _, _, _, _, _, _, _, _, _, _, _),
+    format('Nama Item       : ~w', [NamaItem]), nl,
+    showItemHealthRegen(ID),
+    showItemStaminaRegen(ID),
+    showItemHealthRegen(ID),
+    showItemMaxHealth(ID),
+    showItemMaxStamina(ID),
+    showItemMaxMana(ID),
+    showItemAttack(ID),
+    showItemDefense(ID).
