@@ -144,10 +144,10 @@ w :-
     (
         isShop(Next,TempY) -> 
         write('*** Kamu berada di Shop ***'), nl, nl,
-        writer('Ketikmand "shop" untuk mengakses : shop.'),nl;
+        write('Ketik "shop" untuk mengakses : shop.'),nl;
         isQuest(Next,TempY) ->
         write('*** Kamu berada di lokasi Quest ***'), nl, nl,
-        writer('Ketikmand "quest" untuk menerima atau melihat q: uest.'),nl;
+        write('Ketik "quest" untuk menerima atau melihat q: uest.'),nl;
         isEnemy(Next,TempY) ->
         initFight;
         print(''), int('')
@@ -184,14 +184,10 @@ teleport(X,Y) :-
 showItem :-
     init(_),
     write('******************************'), nl,
-    write('         INVENTORY            '), nl, nl,
-    showUsableItemList, nl,
-    write('-----------------'),nl,
-    showUnusableItemList,nl,!.
-    
-
-% equip(ItemName) :-  % item name dari input user
-    /* inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense) */
+    write('         INVENTORY            '), nl,
+    wshowUsableItemList, nl,
+    write('------------------------------'), nl,
+    showUnusableItemList,nl, !.
 
 equip(ItemName) :-  % item name dari input user
     % Cek apakah ada di inventory
@@ -199,7 +195,8 @@ equip(ItemName) :-  % item name dari input user
     write('Kamu tidak punya item ini'), nl, !.
 equip(ItemName) :-
     inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
-    useItem(ID).
+    useItem(ID),
+    updatePlayerStatus. 
 
 throwItem(ItemName) :-
     % Cek apakah ada di inventory
@@ -207,12 +204,13 @@ throwItem(ItemName) :-
     write('Kamu tidak punya item ini'), nl, !.
 throwItem(ItemName) :-
     inventory(ID, ItemName, _, _, _, _, _, _, _, _, _, _, _, _),
-    delItem(ID).
+    delItem(ID),
+    updatePlayerStatus.
 
   /* Show Items Status */
 infoItem(NamaItem) :-
     \+ inventory(_, NamaItem, _, _, _, _, _, _, _, _, _, _, _, _),
-    write('Kmamu tidak punya item ini'), nl, !.
+    write('Kamu tidak punya item ini'), nl, !.
 infoItem(NamaItem) :-
     write('>>> Item Detail <<<'), nl,
     inventory(ID, NamaItem, _, _, _, _, _, _, _, _, _, _, _, _),

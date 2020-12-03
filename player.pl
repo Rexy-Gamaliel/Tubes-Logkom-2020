@@ -199,7 +199,7 @@ showEquippedAccessory :-
     format('* ~w (equipped)', [Nama]), nl, !.
 
 showPotions :-
-    write('Your Potions: '), nl,
+    nl, write('Your Potions: '), nl,
     showHealthPotions,
     showStaminaPotions,
     showManaPotions.
@@ -286,12 +286,13 @@ showUnusableItemList :-
 showUnusableItemByJob(Job) :-
     \+ inventory(_, _, _, Job, _, _, _, _, _, _, _, _, _, _), !.
 showUnusableItemByJob(Job) :-
-    write('Job-mu tidak sesuai untuk menggunakan item ini: '), nl,
-    forall(inventory(_, Nama, _, Job, _, Amount, _, _, _, _, _, _, _, _),
+    nl, write('Job-mu tidak sesuai untuk menggunakan item ini: '), nl,
+    forall(inventory(Nama, _, _, Job, _, Amount, _, _, _, _, _, _, _, _),
         (
             format('> ~w (x ~d)', [Nama, Amount]), nl
         )
     ), nl.
+
 showUnusableItemByLevel(PlayerLevel) :-
     forall(inventory(_, _, _, _, ItemLevel, _, _, _, _, _, _, _, _, _),
         (
@@ -308,9 +309,6 @@ showUnusableItemByLevel(PlayerLevel) :-
         )
     ), !.
 
-
-
-
 /*** Validasi ITEM ***/
 /*
     playerInfo(Username, Job, Xp, Level, playerStatus/11)
@@ -318,14 +316,14 @@ showUnusableItemByLevel(PlayerLevel) :-
 */
 isItemEquipable(ID, Result) :-
     playerInfo(_, JobPlayer, _, LevelPlayer, _),
-    inventory(ID, _, Tipe, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
+    inventory(ID, _, _, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
     \+ JobPlayer = JobItem,
     LevelPlayer < LevelItem,
     Result = no, !.
 isItemEquipable(ID, Result) :-
-    playerInfo(_, JobPlayer, _, LevelPlayer, _),
-    inventory(ID, _, Tipe, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
-    Tipe =:= unrestricted,
+    playerInfo(_, _, _, _, _),
+    inventory(ID, _, Tipe, _, _, _, _, _, _, _, _, _, _, _),
+    Tipe = unrestricted,
     Result = no, !.
 isItemEquipable(ID, yes).
 
@@ -377,7 +375,7 @@ checkCapacity(Result) :-
     findall(Amount, inventory(_, _, _, _, _, Amount, _, _, _, _, _, _, _, _), ListAmountAll),
     countCurrentCapacity(ListAmountAll, CurrentCapacity),
     (
-        CurrentCapacity > 6 -> Result = full;
+        CurrentCapacity > 100 -> Result = full;
         Result = available
     ).
 
@@ -393,57 +391,72 @@ addItem(ID) :-
 addItem(ID) :-
     inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     NewAmount is Amount + 1,
-    inventory(ID, Nama, Tipe, Job, Level, NewAmount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense).
+    retract(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    asserta(inventory(ID, Nama, Tipe, Job, Level, NewAmount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)).
 delItem(ID) :-
     \+(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)),
-    write('Tidak ada item di inventory'), nl, !.
+    nl, write('Tidak ada item di inventory'), nl, !.
+
+delItem(ID) :-
+    equippedWeapon(ID), 
+    write('Kamu masih menggunakan item ini'), nl,
+    !.
+delItem(ID) :-
+    equippedArmor(ID), 
+    write('Kamu masih menggunakan item ini'), nl,
+    !.
+delItem(ID) :-
+    equippedAccessory(ID), 
+    write('Kamu masih menggunakan item ini'), nl,
+    !.
 delItem(ID) :-
     inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
     Amount =:= 1,
     retract(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)),
-    write('You dropped an item!'), !.
+    nl, write('You dropped an item!'), nl, !.
 delItem(ID) :-
     inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
     NewAmount is Amount - 1,
     retract(inventory(ID, _, _, _, _, NewAmount, _, _, _, _, _, _, _, _)),
-    write('You dropped an item!'), !.
+    nl, write('You dropped an item!'), nl, !.
 
 
-  /* Show Items Status */
+
+
     /* Regen */
 showItemHealthRegen(ID) :-
     inventory(ID, _, _, _, _, _, _, _, _, HealthRegen, _, _, _, _),
     HealthRegen =\= 0,
-    format('    HealthRegen   : ~d per turn', [HealthRegen]), !.
+    format('    HealthRegen   : ~d per turn', [HealthRegen]), nl, !.
 showItemStaminaRegen(ID) :-
     inventory(ID, _, _, _, _, _, _, _, _, _, StaminaRegen, _, _, _),
     StaminaRegen =\= 0,
-    format('    StaminaRegen  : ~d per turn', [StaminaRegen]), !.
+    format('    StaminaRegen  : ~d per turn', [StaminaRegen]), nl, !.
 showItemManaRegen(ID) :-
     inventory(ID, _, _, _, _, _, _, _, _, _, _, ManaRegen, _, _),
     ManaRegen =\= 0,
-    format('    ManaRegen     : ~d per turn', [ManaRegen]), !.
+    format('    ManaRegen     : ~d per turn', [ManaRegen]), nl, !.
 
     /* Max */
 showItemMaxHealth(ID) :-
     inventory(ID, _, _, _, _, _, MaxHealth, _, _, _, _, _, _, _),
     MaxHealth =\= 0,
-    format('    MaxHealth     : +~d', [MaxHealth]), !.
+    format('    MaxHealth     : +~d', [MaxHealth]), nl, !.
 showItemMaxStamina(ID) :-
     inventory(ID, _, _, _, _, _, _, MaxStamina, _, _, _, _, _, _),
     MaxStamina < 0,
-    format('    MaxStamina    : ~d', [MaxStamina]), !.
+    format('    MaxStamina    : ~d', [MaxStamina]), nl, !.
 showItemMaxMana(ID) :-
     inventory(ID, _, _, _, _, _, _, _, MaxMana, _, _, _, _, _),
     MaxMana =\= 0,
-    format('    MaxMana       : +~d', [MaxMana]), !.
+    format('    MaxMana       : +~d', [MaxMana]), nl, !.
 
     /* Attack and defense */
 showItemAttack(ID) :-
     inventory(ID, _, _, _, _, _, _, _, _, _, _, _, Attack, _),
     Attack =\= 0,
-    format('    Attack          : +~d', [Attack]), !.
+    format('    Attack          : +~d', [Attack]), nl, !.
 showItemDefense(ID) :-
     inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, Defense),
     Defense =\= 0,
-    format('    Defense         : +~d', [Defense]), !.
+    format('    Defense         : +~d', [Defense]), nl, !.

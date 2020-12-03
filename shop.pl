@@ -5,7 +5,7 @@ shop :-
     isPlayer(X,Y),
     write('What do you want to buy?'),nl,
     write('1. Gacha (1000 gold) -- gacha.'),nl,
-    write('2. Health Potion (100 gold) -- potion.'),nl,!.   
+    write('2. Potion (100 gold) -- potion.'),nl,!.   
 
 gacha :-
     checkCapacity(Result),
@@ -21,7 +21,7 @@ gacha :-
     retract(gold(M)),
     asserta(gold(N)),
     random(1,19,Index),
-    buyItem(Index).
+    buyItem(Index),!.
 
 gacha :-
     isShop(X,Y),
@@ -179,7 +179,7 @@ potion :-
     N >= 0,
     retract(gold(M)),
     asserta(gold(N)),
-    write('What do you want to buy?'), nl, 
+    write('Potion: '), nl, 
     write('1. healthPotion -- healthPotion.'),nl,
     write('2. staminaPotion -- staminaPotion.'),nl,
     write('3. manaPotion -- manaPotion.'),nl,
