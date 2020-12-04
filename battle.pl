@@ -466,93 +466,163 @@ usePotion :-
     init(_),
     playerInfo(Username, Job, Xp, Level,_), 
     playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-    retract(playerInfo(_,_,_,_,_)), 
-    retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
     queryPotion(IDPotion),
     (
-        IDPotion = 001                    ->  potionEffect(Health, MaxHealth, NewHealth),
-                                                asserta(playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                                                asserta(playerInfo(Username, Job, Xp, Level, playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
-
-        IDPotion = 002                    ->  potionEffect(Stamina, MaxStamina, NewStamina),
-                                                asserta(playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                                                asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
-
-        IDPotion = 003                    ->  potionEffect(Mana, MaxMana, NewMana);
-                                                asserta(playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                                                asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)));
-                                                
-
-        (IDPotion = 009, \+ inBattle(_))  ->  NewXp is Xp + 25;
-                                                asserta(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-                                                asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
-                                                updatePlayerStatus;
-
-        (IDPotion = 009, inBattle(_))     ->  write('Tidak dapat menggunakan Xp potion saat selama pertarungan.'), nl, nl,
-                                                commands                    
-    ),  
-
+        (IDPotion =:= 001)  ->  (
+                                    Health =:= MaxHealth    ->  nl, write('Health is already maximal.'), nl, nl,
+                                                                Next = 0
+                                                            ;   Next = 1,
+                                                                potionEffect(Health, MaxHealth, NewHealth),
+                                                                inventory(ID, healthPotion, potion, JobIn, LevelIn, Amount, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn),
+                                                                New is Amount - 1,
+                                                                retract(inventory(_,_,_,_,_,_,_,_,_,_,_,_,_,_)),
+                                                                asserta(inventory(ID, healthPotion, potion, JobIn, LevelIn, New, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn)),
+                                                                retract(playerInfo(_,_,_,_,_)), 
+                                                                retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
+                                                                asserta(playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                                asserta(playerInfo(Username, Job, Xp, Level, playerStatus(NewHealth, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+                                                                (
+                                                                    \+ inBattle(_) ->   nl, write('Health-mu telah bertambah.'), nl, nl
+                                                                                    ;   sleep(1.5), nl, write('Health-mu telah bertambah.'), nl, sleep(1.5), nl
+                                                                )
+                                )
+                            
+                            ;   (
+                                    (IDPotion =:= 002)  ->  (
+                                                                Stamina =:= MaxStamina ->   nl, write('Stamina is already maximal.'), nl, nl,
+                                                                                            Next = 0
+                                                                                        ;   Next = 1,
+                                                                                            inventory(ID, staminaPotion, potion, JobIn, LevelIn, Amount, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn),
+                                                                                            New is Amount - 1,
+                                                                                            retract(inventory(_,_,_,_,_,_,_,_,_,_,_,_,_,_)),
+                                                                                            asserta(inventory(ID, staminaPotion, potion, JobIn, LevelIn, New, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn)),
+                                                                                            potionEffect(Stamina, MaxStamina, NewStamina),
+                                                                                            retract(playerInfo(_,_,_,_,_)), 
+                                                                                            retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
+                                                                                            asserta(playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                                                            asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, NewStamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+                                                                                            (
+                                                                                                \+ inBattle(_) ->   nl, write('Stamina-mu telah bertambah.'), nl, nl
+                                                                                                               ;    sleep(1.5), nl, write('Stamina-mu telah bertambah.'), nl, sleep(1.5), nl
+                                                                                            )
+                                                                                                              
+                                                            )
+                                                            
+                                                        ;   ( 
+                                                                (IDPotion =:= 003)  ->  ( 
+                                                                                            (Mana =:= MaxMana)  ->  nl, write('Mana is already maximal.'), nl, nl,
+                                                                                                                    Next = 0
+                                                                                                                ;   Next = 1,
+                                                                                                                    inventory(ID, manaPotion, potion, JobIn, LevelIn, Amount, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn),
+                                                                                                                    New is Amount - 1,
+                                                                                                                    retract(inventory(_,_,_,_,_,_,_,_,_,_,_,_,_,_)),
+                                                                                                                    asserta(inventory(ID, manaPotion, potion, JobIn, LevelIn, New, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn)),
+                                                                                                                    potionEffect(Mana, MaxMana, NewMana),
+                                                                                                                    retract(playerInfo(_,_,_,_,_)), 
+                                                                                                                    retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
+                                                                                                                    asserta(playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                                                                                    asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, NewMana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+                                                                                                                    (
+                                                                                                                        \+ inBattle(_) ->   nl, write('Mana-mu telah bertambah.'), nl, nl
+                                                                                                                                        ;   sleep(1.5), nl, write('Mana-mu telah bertambah.'), nl, sleep(1.5), nl
+                                                                                                                    )               
+                                                                                        )
+                                                                                    
+                                                                                    ;   (
+                                                                                         (IDPotion =:= 009, \+ inBattle(_)) ->  NewXp is Xp + 25,
+                                                                                                                                New is Amount - 1,
+                                                                                                                                retract(inventory(_,_,_,_,_,_,_,_,_,_,_,_,_,_)),
+                                                                                                                                asserta(inventory(ID, xpPotion, potion, JobIn, LevelIn, New, MaxHealthIn, MaxStaminaIn, MaxManaIn, HealthRegenIn, StaminaRegenIn, ManaRegenIn, AttackIn, DefenseIn)),
+                                                                                                                                retract(playerInfo(_,_,_,_,_)), 
+                                                                                                                                retract(playerStatus(_,_,_,_,_,_,_,_,_,_,_)),
+                                                                                                                                asserta(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+                                                                                                                                asserta(playerInfo(Username, Job, NewXp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+                                                                                                                                nl, write('Xp-mu telah bertambah.'), nl,
+                                                                                                                                updatePlayerStatus
+                                                                                                                            
+                                                                                                                            ;   (
+                                                                                                                                    (IDPotion =:= 009, inBattle(_)) ->  sleep(1.5), nl, write('Tidak dapat menggunakan Xp potion selama pertarungan.'), nl, sleep(1.5), nl,
+                                                                                                                                                                        commands
+                                                                                                                                                                    ;   nl, write('Kamu tidak memiliki potion tersebut.'), nl
+                                                                                                                                ),
+                                                                                                                                Next = 0
+                                                                                        )         
+                                                            )
+                                )                                                             
+    ),
     (
-        \+ inBattle(_) -> nl, write('Health-mu telah bertambah.'), nl;
-        sleep(1.5), nl, write('Health-mu telah bertambah.'), nl, sleep(1.5), nl,
-        curBattleStatus,
-        decreaseCooldownEnemy,
-        enemyCounterAttack,
-        curBattleStatus,
-        commands
+        (inBattle(_), Next =:= 0)   ->  nl, commands
+                                    ;   (
+                                            (inBattle(_), Next =:= 1)   ->  curBattleStatus,
+                                                                            decreaseCooldownEnemy,
+                                                                            enemyCounterAttack,
+                                                                            curBattleStatus,
+                                                                            commands
+                                                                        ;   nl   
+                                        )
+         
     ),!.
 
 potionEffect(CurrentStatus, MaxStatus, NewStatus) :-
     TempStatus is CurrentStatus + 15,
     (
-        (TempStatus > MaxStatus) -> NewStatus is MaxStatus;
-        NewStatus is TempStatus
-    ).
+        (TempStatus > MaxStatus)    ->  NewStatus is MaxStatus
+                                    ;   NewStatus is TempStatus    
+    ),!.
 
 queryPotion(ID) :-
     showPotions,
     nl, write('Pilih potion yang ingin dipakai (masukkan nama potion yang sesuai): '), nl,
     write('| '), read(InputPotionName),
     (
-        InputPotionName == healthPotion ->  (
-            \+ inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya healthPotion.'), nl;
-            inventory(ID, healthPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-            New is Amount - 1,
-            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, healthPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
-        );
-        InputPotionName == staminaPotion -> (
-            \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya staminaPotion.'), nl;
-            inventory(ID, staminaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-            New is Amount - 1,
-            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, staminaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
-        );
-        InputInputPotionName == manaPotion -> (
-            \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya manaPotion.'), nl;
-            inventory(ID, manaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-            New is Amount - 1,
-            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, manaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
-        );
-        InputInputPotionName == xpPotion -> (
-            \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) -> write('Kamu tidak punya xpPotion.'), nl;
-            inventory(ID, xpPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
-            New is Amount - 1,
-            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
-            asserta(inventory(ID, xpPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
-        );
-        nl, write('Tidak bisa menggunakan potion.'), write(ID), nl
-    ),!.
+        (InputPotionName == healthPotion)   ->  (
+                                                    \+  inventory(ID, healthPotion, potion, _, _, _, _, _, _, _, _, _, _, _)    ->  ID = -1
+                                                                                                                                ;   inventory(ID, healthPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)                                
+                                                )
+
+                                            ;   (
+                                                    (InputPotionName == staminaPotion)  ->  (
+                                                                                                \+ inventory(ID, staminaPotion, potion, _, _, _, _, _, _, _, _, _, _, _)    ->  ID = -1
+                                                                                                                                                                            ;   inventory(ID, staminaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+                                                                                                                                                                                New is Amount - 1,
+                                                                                                                                                                                retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+                                                                                                                                                                                asserta(inventory(ID, staminaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)) 
+                                                                                            )
+
+                                                                                        ;   (
+                                                                                                (InputInputPotionName == manaPotion)    ->  (
+                                                                                                                                                \+ inventory(ID, manaPotion, potion, _, _, _, _, _, _, _, _, _, _, _)   ->  ID = -1
+                                                                                                                                                                                                                        ;   inventory(ID, manaPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+                                                                                                                                                                                                                            New is Amount - 1,
+                                                                                                                                                                                                                            retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+                                                                                                                                                                                                                            asserta(inventory(ID, manaPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
+                                                                                                                                            )
+                                                                                                                                        
+                                                                                                                                        ;   (
+                                                                                                                                                (InputInputPotionName == xpPotion)  ->  (
+                                                                                                                                                                                            \+ inventory(ID, xpPotion, potion, _, _, _, _, _, _, _, _, _, _, _) ->  ID = -1
+                                                                                                                                                                                                                                                                ;   inventory(ID, xpPotion, potion, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+                                                                                                                                                                                                                                                                    New is Amount - 1,
+                                                                                                                                                                                                                                                                    retract(inventory(_,_,_, _, _, _, _, _, _, _, _, _, _, _)),
+                                                                                                                                                                                                                                                                    asserta(inventory(ID, xpPotion, potion, Job, Level, New, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))
+                                                                                                                                                                                        )
+
+                                                                                                                                                                                   ;    ID = -1
+                                                                                                                                            )
+                                                                                            )
+                                                )
+    ),!.                                            
 
 /*** Remove Triggered Enemy -Mati- ***/
 removeEnemy :-
     inBattle(_),
     (
-        initBoss(_) ->  retract(curBossInfo(_,_,_,_,_,_,_,_)),
-                        retract(initBoss(_));
-        retract(curEnemyInfo(_,_,_,_,_,_,_,_,_))
-    ),    
+        initBoss(_) 
+        ->  retract(curBossInfo(_,_,_,_,_,_,_,_)),
+            retract(initBoss(_))
+
+        ;   retract(curEnemyInfo(_,_,_,_,_,_,_,_,_))
+    ),
     retract(cooldownEnemy(_)),
     retract(cooldownPlayer(_)),
     retract(inBattle(_)),
