@@ -31,16 +31,21 @@ status :-
    */
 requiredXp(Level, LevelXp) :-
     LevelXp is (15 + 5 * Level).
+updateLevel :-
+    playerInfo(_, _, Xp, Level, _),
+    requiredXp(Level, LevelXp), !,
+    Xp < LevelXp, !.
 updateLevel :-      /* bisa dipake juga waktu minum potion */
     playerInfo(_, _, Xp, Level, _),
-    requiredXp(Level, LevelXp),!,
+    requiredXp(Level, LevelXp), !,
     Xp >= LevelXp,
     NewXp is Xp - LevelXp,
     NewLevel is Level + 1,
     retract(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
+    retract(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
     asserta(playerInfo(Username, Job, NewXp, NewLevel, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
-    updateLevel, !.
-updateLevel.
+    asserta(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    updateLevel.
 
 
 /*** PLAYER STATUS ***/
@@ -105,17 +110,19 @@ updateBaseStats :-
         )
     ),
     retract(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
-    asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Ntamina, Mana, NewMaxHealth, NewMaxStamina, NewMaxMana, NewHealthRegen, NewStaminaRegen, NewManaRegen, NewAttack, NewDefense))).
+    retract(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, NewMaxHealth, NewMaxStamina, NewMaxMana, NewHealthRegen, NewStaminaRegen, NewManaRegen, NewAttack, NewDefense))),
+    asserta(playerStatus(Health, Stamina, Mana, NewMaxHealth, NewMaxStamina, NewMaxMana, NewHealthRegen, NewStaminaRegen, NewManaRegen, NewAttack, NewDefense)).
 
 updateBonusStats :-
-    equippedWeapon(IDWeapon),
-    equippedArmor(IDArmor),
-    equippedAccessory(IDAccessory),
-    item(IDWeapon, Nama, Tipe, Job, Level, MaxHealth1, MaxStamina1, MaxMana1, HealthRegen1, StaminaRegen1, ManaRegen1, Attack1, Defense1), 
-    item(IDArmor, Nama, Tipe, Job, Level, MaxHealth2, MaxStamina2, MaxMana2, HealthRegen2, StaminaRegen2, ManaRegen2, Attack2, Defense2), 
-    item(IDAccessory, Nama, Tipe, Job, Level, MaxHealth3, MaxStamina3, MaxMana3, HealthRegen3, StaminaRegen3, ManaRegen3, Attack3, Defense3), 
+    retrieveWeaponID(IDWeapon),
+    retrieveArmorID(IDArmor),
+    retrieveAccessoryID(IDAccessory),
+    retrieveItemEffect(IDWeapon, MaxHealth1, MaxStamina1, MaxMana1, HealthRegen1, StaminaRegen1, ManaRegen1, Attack1, Defense1), 
+    retrieveItemEffect(IDArmor, MaxHealth2, MaxStamina2, MaxMana2, HealthRegen2, StaminaRegen2, ManaRegen2, Attack2, Defense2), 
+    retrieveItemEffect(IDAccessory, MaxHealth3, MaxStamina3, MaxMana3, HealthRegen3, StaminaRegen3, ManaRegen3, Attack3, Defense3), 
     playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
-    NewHealth is MaxHealth1 + MaxHealth1 + MaxHealth2 + MaxHealth3,
+    NewHealth is MaxHealth + MaxHealth1 + MaxHealth2 + MaxHealth3,
     NewHealthRegen is HealthRegen + HealthRegen1 + HealthRegen2 + HealthRegen3,
     NewStamina is MaxStamina + MaxStamina1 + MaxStamina2 + MaxStamina3,
     NewStaminaRegen is StaminaRegen + StaminaRegen1 + StaminaRegen2 + StaminaRegen3,
@@ -124,9 +131,51 @@ updateBonusStats :-
     NewAttack is Attack + Attack1 + Attack2 + Attack3,
     NewDefense is Defense + Defense1 + Defense2 + Defense3,
     retract(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense))),
-    asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, NewHealth, NewStamina, NewMana, NewHealthRegen, NewStaminaRegen, NewManaRegen, NewAttack, NewDefense))).
+    retract(playerStatus(Health, Stamina, Mana, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    asserta(playerInfo(Username, Job, Xp, Level, playerStatus(Health, Stamina, Mana, NewHealth, NewStamina, NewMana, NewHealthRegen, NewStaminaRegen, NewManaRegen, NewAttack, NewDefense))),
+    asserta(playerStatus(Health, Stamina, Mana, NewHealth, NewStamina, NewMana, NewHealthRegen, NewStaminaRegen, NewManaRegen, NewAttack, NewDefense)).
     
-    
+retrieveItemEffect(ID, MaxHealth1, HealthRegen1, MaxStamina1, StaminaRegen1, MaxMana1, ManaRegen1, Attack1, Defense1) :-
+    \+ inventory(ID,_,_,_, _,_,_,_,_, _,_,_,_,_),
+    HealthRegen1 is 0,
+    MaxHealth1 is 0,
+    StaminaRegen1 is 0,
+    MaxStamina1 is 0,
+    ManaRegen1 is 0,
+    MaxMana1 is 0,
+    Attack1 is 0,
+    Defense1 is 0, !.
+
+retrieveItemEffect(ID, MaxHealth1, HealthRegen1, MaxStamina1, StaminaRegen1, MaxMana1, ManaRegen1, Attack1, Defense1) :-
+    inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
+    HealthRegen1 is HealthRegen,
+    MaxHealth1 is MaxHealth,
+    StaminaRegen1 is StaminaRegen,
+    MaxStamina1 is MaxStamina,
+    ManaRegen1 is ManaRegen,
+    MaxMana1 is MaxMana,
+    Attack1 is Attack,
+    Defense1 is Defense, !.
+
+
+retrieveWeaponID(IDResult) :-
+    \+ equippedWeapon(IDWeapon), 
+    IDResult is 0.
+retrieveWeaponID(IDResult) :-
+    equippedWeapon(IDWeapon), 
+    IDResult is IDWeapon.
+retrieveArmorID(IDResult) :-
+    \+ equippedArmor(IDArmor), 
+    IDResult is 0.
+retrieveArmorID(IDResult) :-
+    equippedArmor(IDArmor), 
+    IDResult is IDArmor.
+retrieveAccessoryID(IDResult) :-
+    \+ equippedAccessory(IDAccessory), 
+    IDResult is 0.
+retrieveAccessoryID(IDResult) :-
+    equippedAccessory(IDAccessory), 
+    IDResult is IDAccessory.
 
 
 
@@ -287,7 +336,7 @@ showUnusableItemByJob(Job) :-
     \+ inventory(_, _, _, Job, _, _, _, _, _, _, _, _, _, _), !.
 showUnusableItemByJob(Job) :-
     nl, write('Job-mu tidak sesuai untuk menggunakan item ini: '), nl,
-    forall(inventory(Nama, _, _, Job, _, Amount, _, _, _, _, _, _, _, _),
+    forall(inventory(_, Nama, _, Job, _, Amount, _, _, _, _, _, _, _, _),
         (
             format('> ~w (x ~d)', [Nama, Amount]), nl
         )
@@ -330,14 +379,11 @@ isItemEquipable(ID, yes).
 
 
 /* Use Item (ID) */
-useItem(ID) :-      /*cek prasyarat Item*/
-    inventory(ID, _, _, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
-    playerInfo(_, JobPlayer, _, LevelPlayer, _), !,
-    LevelPlayer < LevelItem,
-    \+ JobItem = JobPlayer,
-    write('Kamu tidak bisa menggunakan item ini'), !.
 useItem(ID) :-
-    inventory(ID, _, Tipe, _, _, _, _, _, _, _, _, _, _, _),
+    inventory(ID, _, Tipe, JobItem, LevelItem, _, _, _, _, _, _, _, _, _),
+    playerInfo(_, JobPlayer, _, LevelPlayer, _), !,
+    LevelPlayer >= LevelItem, !,
+    JobItem = JobPlayer,
     (
         Tipe = weapon -> useWeapon(ID);
         (
@@ -346,7 +392,9 @@ useItem(ID) :-
                 Tipe = accessory -> useAccessory(ID)
             )
         )
-    ).
+    ), !.
+useItem(ID) :-      /*cek prasyarat Item*/
+    write('Kamu tidak bisa menggunakan item ini'), !.
     /* untuk use dibawah, Player dapat memakai itemnya (level dan job valid) */
 useWeapon(ID) :-       
     \+ equippedWeapon(_),
@@ -399,14 +447,20 @@ delItem(ID) :-
 
 delItem(ID) :-
     equippedWeapon(ID), 
+    inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _), 
+    Amount =:= 1,
     write('Kamu masih menggunakan item ini'), nl,
     !.
 delItem(ID) :-
     equippedArmor(ID), 
+    inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _), !,
+    Amount =:= 1,
     write('Kamu masih menggunakan item ini'), nl,
     !.
 delItem(ID) :-
     equippedAccessory(ID), 
+    inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _), 
+    Amount =:= 1,
     write('Kamu masih menggunakan item ini'), nl,
     !.
 delItem(ID) :-
@@ -415,11 +469,11 @@ delItem(ID) :-
     retract(inventory(ID, _, _, _, _, _, _, _, _, _, _, _, _, _)),
     nl, write('You dropped an item!'), nl, !.
 delItem(ID) :-
-    inventory(ID, _, _, _, _, Amount, _, _, _, _, _, _, _, _),
+    inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense),
     NewAmount is Amount - 1,
-    retract(inventory(ID, _, _, _, _, NewAmount, _, _, _, _, _, _, _, _)),
+    retract(inventory(ID, Nama, Tipe, Job, Level, Amount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
+    asserta(inventory(ID, Nama, Tipe, Job, Level, NewAmount, MaxHealth, MaxStamina, MaxMana, HealthRegen, StaminaRegen, ManaRegen, Attack, Defense)),
     nl, write('You dropped an item!'), nl, !.
-
 
 
 

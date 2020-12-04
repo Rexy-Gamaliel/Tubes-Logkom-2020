@@ -185,7 +185,7 @@ showItem :-
     init(_),
     write('******************************'), nl,
     write('         INVENTORY            '), nl,
-    wshowUsableItemList, nl,
+    showUsableItemList, nl,
     write('------------------------------'), nl,
     showUnusableItemList,nl, !.
 

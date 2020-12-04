@@ -64,7 +64,6 @@ cekQuest :-
     asserta(gold(NewG)),
     retract(initQuest(_)),
     retract(mission(_,_,_,_)), !.
-    retract(mission(_,_,_,_)).
 
 cekQuest :- !.
 
