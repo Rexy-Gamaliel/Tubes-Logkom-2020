@@ -199,7 +199,7 @@ validateBattleStatus(Mode) :-
     (
         (Mode =:= 1) -> EnemyHealth2 is EnemyHealth - Attack + EnemyHealthRegen,
                         PlayerHealth is Health + HealthRegen,
-                        PlayerStamina is Stamina + StaminaRegen - 5,
+                        PlayerStamina is Stamina + StaminaRegen - 10,
                         PlayerMana is Mana + ManaRegen;
 
         (Mode =:= 2) -> PlayerHealth is Health + HealthRegen + Defense - EnemyBasicAttack,
@@ -209,7 +209,7 @@ validateBattleStatus(Mode) :-
 
         (Mode =:= 3) -> EnemyHealth2 is EnemyHealth + EnemyHealthRegen - 1.5*Attack,
                         PlayerHealth is Health + HealthRegen,
-                        PlayerStamina is Stamina + StaminaRegen - 5,
+                        PlayerStamina is Stamina + StaminaRegen - 15,
                         PlayerMana is Mana + ManaRegen - 8;
 
         (Mode =:= 4) -> PlayerHealth is Health + HealthRegen + Defense - EnemySpecialAttack,
@@ -363,8 +363,12 @@ attack :-
     ),!.
 
 attack :-
+    init(_),
     \+ inBattle(_),
     nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+
+attack :-
+    \+ init(_).
     
 /** ----------------------------------------------------- **/
 
@@ -419,8 +423,12 @@ specialAttack :-
     ),!.
 
 specialAttack :-
+    init(_),
     \+ inBattle(_),
     nl, write('Kamu sedang tidak bertarung dengan musuh.'), nl,!.
+
+specialAttack :-
+    \+ init(_).
 
 /************************** ******************************/
 
